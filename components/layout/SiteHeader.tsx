@@ -5,12 +5,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { LayoutGrid, Search } from "lucide-react";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/account", label: "Account" },
-  { href: "/admin", label: "Admin" },
-];
+const navLinks: { href: string; label: string }[] = [];
+
 
 export function SiteHeader() {
   const pathname = usePathname();
