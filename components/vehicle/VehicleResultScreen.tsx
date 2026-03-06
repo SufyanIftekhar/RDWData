@@ -3,11 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PlateBadge } from "@/components/ui/PlateBadge";
-import { MapPanel } from "@/components/vehicle/MapPanel";
 import { InspectionTimeline } from "@/components/vehicle/InspectionTable";
 import { useVehicleLookup } from "@/hooks/useVehicleLookup";
 import { formatDisplayPlate } from "@/lib/rdw/normalize";
-import type { VehicleProfile } from "@/lib/rdw/types";
 
 // Micro-components
 import { GaugeChart } from "@/components/ui/GaugeChart";
@@ -15,29 +13,19 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { FeatureCard } from "@/components/ui/FeatureCard";
 
 import {
-  ArrowLeft, RotateCcw, AlertCircle, CreditCard, RefreshCw,
-  CheckCircle2, XCircle, Zap, TrendingDown,
-  ChevronRight, CarFront, FileText, AlertTriangle, HelpCircle,
+  ArrowLeft, AlertCircle, RefreshCw,
+  CheckCircle2, XCircle, TrendingDown,
+  CarFront, AlertTriangle
 } from "lucide-react";
 
 type Props = { plate: string };
 
-// ─── Dutch colour → hex
-const DUTCH_HEX: Record<string, string> = {
-  BLAUW: "#3b82f6", GRIJS: "#94a3b8", ZWART: "#1e293b", WIT: "#e2e8f0",
-  ROOD: "#ef4444", GROEN: "#22c55e", GEEL: "#eab308", ORANJE: "#f97316",
-  ZILVER: "#cbd5e1", BEIGE: "#d4c5a9", BRUIN: "#92400e", PAARS: "#a855f7",
-};
-const colourHex = (n: string | null) => DUTCH_HEX[n?.toUpperCase() ?? ""] ?? "#94a3b8";
 function fmtColour(n: string | null) {
   if (!n) return null;
   return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();
 }
 
 // ─── Primitives
-function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`skeleton ${className}`} />;
-}
 function LoadingScreen() {
   return (
     <div className="min-h-screen bg-slate-50 p-6 flex items-center justify-center">
@@ -88,7 +76,7 @@ function MiniStatus({ ok, label }: { ok: boolean; label: string }) {
 
 // ─── Main ────────────────────────────────────────────────────────────────
 export function VehicleResultScreen({ plate }: Props) {
-  const { normalized, isValid, data, isLoading, isError, refetch } = useVehicleLookup(plate);
+  const { normalized, isValid, data, isLoading, isError } = useVehicleLookup(plate);
   const [activeSection, setActiveSection] = useState("samenvatting");
 
   // Sticky Sidebar intersection observer
@@ -108,7 +96,7 @@ export function VehicleResultScreen({ plate }: Props) {
       <div className="w-full max-w-sm rounded-3xl border border-red-100 bg-white p-8 text-center shadow-xl">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50"><AlertCircle className="h-6 w-6 text-red-500" /></div>
         <h1 className="mt-5 font-display text-xl font-black text-slate-900">Vehicle Not Found</h1>
-        <p className="mt-2 text-sm text-slate-500">We couldn't find {plate} or the RDW service is unavailable.</p>
+        <p className="mt-2 text-sm text-slate-500">We couldn&apos;t find {plate} or the RDW service is unavailable.</p>
         <div className="mt-6 flex justify-center gap-3">
           <Link href="/" className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"><ArrowLeft className="h-4 w-4" /> Home</Link>
         </div>
@@ -130,9 +118,6 @@ export function VehicleResultScreen({ plate }: Props) {
     { id: "historie", label: "History & MOT (APK)" },
     { id: "waarde", label: "Value & Costs" },
   ];
-
-  const napOk = !!v.napVerdict && !v.napVerdict.toLowerCase().includes("onlogisch");
-  const apkOk = !!v.apkExpiryDate && new Date(v.apkExpiryDate) > new Date();
 
   return (
     <div className="min-h-screen bg-[#F4F7FB]">

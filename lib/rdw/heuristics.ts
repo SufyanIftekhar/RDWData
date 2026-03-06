@@ -16,7 +16,7 @@ export type EnrichedData = {
     knownIssues: { title: string; severity: string; target: string; advice: string }[];
 };
 
-export function enrichVehicleData(v: VehicleProfile["vehicle"], raw: VehicleProfile["raw"]): EnrichedData {
+export function enrichVehicleData(v: VehicleProfile["vehicle"]): EnrichedData {
     // 1. Age Calculation
     let ageInMonths = null;
     let ageString = null;

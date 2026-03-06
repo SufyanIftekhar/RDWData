@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Search, Star, ShieldCheck, Database, Zap, CheckCircle } from "lucide-react";
-import { normalizePlate, validateDutchPlate, formatDisplayPlate } from "@/lib/rdw/normalize";
+import { Search, Star, Database, ShieldCheck } from "lucide-react";
+import { normalizePlate, validateDutchPlate } from "@/lib/rdw/normalize";
 
 // ── Dot grid ──────────────────────────────────────────────────────────────
 function DotGrid() {
@@ -110,7 +110,7 @@ function PlateSearch() {
 }
 
 // ── Hero section ──────────────────────────────────────────────────────────
-export function HeroSection({ title: _t, subtitle }: { title: string; subtitle: string }) {
+export function HeroSection({ subtitle }: { subtitle: string }) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50/20 py-12 lg:py-0">
       {/* Ambient blobs */}

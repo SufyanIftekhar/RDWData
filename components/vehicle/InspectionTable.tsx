@@ -53,7 +53,7 @@ export function InspectionTimeline({ items, descriptions }: Props) {
       {/* Vertical timeline line */}
       <div className="absolute left-[19px] top-5 bottom-5 w-0.5 bg-slate-100" />
 
-      {groups.map((group, idx) => {
+      {groups.map((group) => {
         const hasDefects = group.defects.some((d) => d.count > 0);
         const totalDefects = group.defects.reduce((s, d) => s + d.count, 0);
         return (

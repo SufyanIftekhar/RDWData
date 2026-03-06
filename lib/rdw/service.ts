@@ -28,6 +28,7 @@ type PlateLookupOptions = {
  * This ensures any mapper improvements apply automatically without clearing cache.
  */
 function rehydrateFromRaw(plate: string, cachedData: Partial<VehicleProfile>): VehicleProfile {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const raw = cachedData.raw ?? ({} as any);
   return toVehicleProfile({
     plate,

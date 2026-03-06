@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Search, ChevronDown, ShieldCheck, BarChart2,
-  FileText, Award, Star, CheckCircle2, ArrowRight,
+  Search, ShieldCheck, BarChart2,
+  FileText, Star, CheckCircle2, ArrowRight,
   BadgeCheck, Zap, Users, RefreshCw, Car
 } from "lucide-react";
 import { normalizePlate, validateDutchPlate } from "@/lib/rdw/normalize";
@@ -421,8 +421,6 @@ const STEPS = [
   { Icon: FileText, title: "Get Your Full Report", desc: "Specs, APK, recalls, NAP, insurance and more." },
 ];
 
-function id(s: string) { return `step-${s.slice(0, 3).toLowerCase()}`; }
-
 function PlateCheckSection() {
   return (
     <section id="how" className="bg-white py-16">
@@ -436,7 +434,7 @@ function PlateCheckSection() {
             <span className="text-brand-600">Fast, Free &amp; Accurate</span>
           </h2>
           <div className="mt-8 space-y-6">
-            {STEPS.map(({ Icon, title, desc }, i) => (
+            {STEPS.map(({ Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-md shadow-brand-600/25">
                   <Icon className="h-5 w-5" />

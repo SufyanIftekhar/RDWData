@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { MapPin, Navigation, Loader2, AlertCircle, Wrench, RefreshCw } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────

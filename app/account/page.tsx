@@ -20,7 +20,7 @@ export default function AccountPage() {
           </div>
           <h1 className="font-display text-3xl font-extrabold text-slate-900 md:text-4xl">Your Account</h1>
           <p className="mt-3 max-w-sm mx-auto text-slate-500">
-            A full account dashboard is coming soon. Here's a preview of what you'll have access to.
+            A full account dashboard is coming soon. Here&apos;s a preview of what you&apos;ll have access to.
           </p>
           <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5">
             <Sparkles className="h-3.5 w-3.5 text-brand-500" />
@@ -32,8 +32,10 @@ export default function AccountPage() {
       {/* Features */}
       <div className="bg-slate-50 py-12">
         <div className="mx-auto max-w-4xl px-6">
+          <h2 className="text-xl font-bold mb-4">You&apos;re almost there!</h2>
+          <p className="text-gray-600 mb-6">We&apos;ve sent a verification link to your email address.</p>
           <p className="mb-8 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">
-            What's coming
+            What&apos;s coming
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {features.map(({ Icon, title, desc }) => (
@@ -46,7 +48,7 @@ export default function AccountPage() {
                 </span>
                 <div>
                   <p className="font-display font-bold text-slate-900">{title}</p>
-                  <p className="mt-0.5 text-sm text-slate-500">{desc}</p>
+                  <p className="mt-4 text-sm text-gray-500">{desc}</p>
                 </div>
               </div>
             ))}
