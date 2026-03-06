@@ -30,6 +30,7 @@ function dateStr(v: unknown): string | null {
 export function toVehicleProfile(input: {
   plate: string;
   fromCache: boolean;
+  defectDescriptions?: Record<string, string>;
   main: RdwRecord[];
   fuel: RdwRecord[];
   apk: RdwRecord[];
@@ -122,6 +123,7 @@ export function toVehicleProfile(input: {
 
     inspections: input.apk,
     defects: input.defects,
+    defectDescriptions: input.defectDescriptions ?? {},
     recalls: input.recalls,
     typeApprovals: input.typeApprovals,
 

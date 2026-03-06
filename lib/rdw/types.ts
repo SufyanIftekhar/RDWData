@@ -67,6 +67,7 @@ export type VehicleProfile = {
   };
   inspections: RdwRecord[];
   defects: RdwRecord[];
+  defectDescriptions: Record<string, string>;
   recalls: RdwRecord[];
   typeApprovals: RdwRecord[];
   raw: {

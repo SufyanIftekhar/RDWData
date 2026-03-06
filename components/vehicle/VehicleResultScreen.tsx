@@ -514,7 +514,7 @@ export function VehicleResultScreen({ plate }: Props) {
                 {activeTab === "history" && (
                   <div className="animate-fade-in p-5 sm:p-6">
                     <SectionHead title="APK Inspection Records" count={data.inspections.length} />
-                    <InspectionTimeline items={data.inspections} />
+                    <InspectionTimeline items={data.inspections} descriptions={data.defectDescriptions} />
                   </div>
                 )}
                 {activeTab === "safety" && (

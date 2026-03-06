@@ -8,7 +8,8 @@ export const DATASETS = {
   recalls: "af5r-44mf",   // not plate-filterable via simple param
   body: "vezc-m2t6",
   typeApprovals: "55kv-xf7m",
-  approvedGarages: "5k74-3jha"
+  approvedGarages: "5k74-3jha",
+  defectDescriptions: "tbph-ct3j" // tbph-ct3j
 } as const;
 
 /** These datasets don't support `?kenteken=` filtering — skip or use $where */
@@ -28,6 +29,14 @@ export function rdwUrl(datasetId: string, plate: string): string {
 export function rdwSoqlUrl(datasetId: string, plate: string, limit = 50): string {
   const url = new URL(`${RDW_BASE_URL}/${datasetId}.json`);
   url.searchParams.set("$where", `kenteken='${plate}'`);
+  url.searchParams.set("$limit", String(limit));
+  return url.toString();
+}
+
+/** SoQL generic URL for custom $where clauses */
+export function rdwSoqlCustomUrl(datasetId: string, whereClause: string, limit = 50): string {
+  const url = new URL(`${RDW_BASE_URL}/${datasetId}.json`);
+  url.searchParams.set("$where", whereClause);
   url.searchParams.set("$limit", String(limit));
   return url.toString();
 }

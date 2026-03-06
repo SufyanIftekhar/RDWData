@@ -1,12 +1,15 @@
 import type { RdwRecord } from "@/lib/rdw/types";
 import { ShieldCheck, AlertTriangle, CalendarClock, Hash } from "lucide-react";
 
-type Props = { items: RdwRecord[] };
+type Props = {
+  items: RdwRecord[];
+  descriptions: Record<string, string>;
+};
 
 type InspectionGroup = {
   dateRaw: string;
   dateDisplay: string;
-  defects: { code: string; count: number }[];
+  defects: { code: string; count: number; desc?: string }[];
 };
 
 function formatDate(raw: string | null | undefined): string {
@@ -17,7 +20,7 @@ function formatDate(raw: string | null | undefined): string {
   return raw as string;
 }
 
-function groupByDate(items: RdwRecord[]): InspectionGroup[] {
+function groupByDate(items: RdwRecord[], dict: Record<string, string>): InspectionGroup[] {
   const map = new Map<string, InspectionGroup>();
   for (const item of items) {
     const dateRaw = String(item.meld_datum_door_keuringsinstantie ?? "");
@@ -26,13 +29,14 @@ function groupByDate(items: RdwRecord[]): InspectionGroup[] {
     }
     const code = String(item.gebrek_identificatie ?? "—");
     const count = Number(item.aantal_gebreken_geconstateerd ?? 0);
-    map.get(dateRaw)!.defects.push({ code, count });
+    const desc = dict[code];
+    map.get(dateRaw)!.defects.push({ code, count, desc });
   }
   return Array.from(map.values()).sort((a, b) => b.dateRaw.localeCompare(a.dateRaw));
 }
 
 /** Named export to match VehicleResultScreen import */
-export function InspectionTimeline({ items }: Props) {
+export function InspectionTimeline({ items, descriptions }: Props) {
   if (items.length === 0) {
     return (
       <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-5 py-5">
@@ -42,7 +46,7 @@ export function InspectionTimeline({ items }: Props) {
     );
   }
 
-  const groups = groupByDate(items);
+  const groups = groupByDate(items, descriptions);
 
   return (
     <div className="relative space-y-0">
@@ -89,6 +93,7 @@ export function InspectionTimeline({ items }: Props) {
                     </span>
                     <span className="text-xs text-slate-600">
                       Code <strong className="font-mono font-bold text-slate-800">{d.code}</strong>
+                      {d.desc && <span className="ml-2 border-l border-slate-200 pl-2 text-slate-500">{d.desc}</span>}
                     </span>
                     <span className="ml-auto rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-bold text-slate-600 ring-1 ring-slate-200">
                       ×{d.count}

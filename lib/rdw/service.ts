@@ -1,6 +1,7 @@
 import {
   rdwUrl,
   rdwSoqlUrl,
+  rdwSoqlCustomUrl,
   DATASETS,
   NON_PLATE_FILTERABLE_DATASETS
 } from "@/lib/rdw/endpoints";
@@ -26,10 +27,12 @@ type PlateLookupOptions = {
  * Re-hydrate a cached profile by re-running the mapper over its raw data.
  * This ensures any mapper improvements apply automatically without clearing cache.
  */
-function rehydrateFromRaw(plate: string, raw: VehicleProfile["raw"]): VehicleProfile {
+function rehydrateFromRaw(plate: string, cachedData: Partial<VehicleProfile>): VehicleProfile {
+  const raw = cachedData.raw ?? ({} as any);
   return toVehicleProfile({
     plate,
     fromCache: true,
+    defectDescriptions: cachedData.defectDescriptions ?? {},
     main: raw.main ?? [],
     fuel: raw.fuel ?? [],
     apk: raw.apk ?? [],
@@ -92,6 +95,7 @@ function withProfileDefaults(profile: Partial<VehicleProfile>): VehicleProfile {
     },
     inspections: profile.inspections ?? [],
     defects: profile.defects ?? raw.defects ?? [],
+    defectDescriptions: profile.defectDescriptions ?? {},
     recalls: profile.recalls ?? [],
     typeApprovals: profile.typeApprovals ?? [],
     raw: {
@@ -154,25 +158,32 @@ async function fetchTypeApprovalsSafe(plate: string): Promise<RdwRecord[]> {
   }
 }
 
-export async function getVehicleProfile(plate: string): Promise<VehicleProfile> {
-  const now = Date.now();
-
-  // --- Cache read ---
+/**
+ * Fetches defect descriptions for the given unique set of defect identification codes.
+ * Datasets: tbph-ct3j
+ */
+async function fetchDefectDescriptionsSafe(codes: string[]): Promise<Record<string, string>> {
+  if (codes.length === 0) return {};
   try {
-    await connectMongo();
-    const cached = await VehicleCacheModel.findById(plate).lean<VehicleCacheDoc | null>();
-    if (cached && cached.expiresAt?.getTime() > now) {
-      const cachedData = cached.data as Partial<VehicleProfile>;
-      const raw = cachedData.raw;
-      if (raw?.main?.length) {
-        return { ...rehydrateFromRaw(plate, raw as VehicleProfile["raw"]), fromCache: true };
+    const list = codes.map((c) => `'${c}'`).join(",");
+    const data = await fetchRdwDataset(
+      rdwSoqlCustomUrl(DATASETS.defectDescriptions, `gebrek_identificatie in (${list})`, 100),
+      { allowErrorStatuses: [400, 404] }
+    );
+    const map: Record<string, string> = {};
+    for (const item of data) {
+      if (item.gebrek_identificatie && item.gebrek_omschrijving) {
+        map[String(item.gebrek_identificatie)] = String(item.gebrek_omschrijving);
       }
-      return { ...withProfileDefaults(cachedData), fromCache: true };
     }
-  } catch (error) {
-    console.warn("Vehicle cache read unavailable; falling back to live RDW fetch.", error);
+    return map;
+  } catch (err) {
+    console.warn("Failed to fetch defect descriptions", err);
+    return {};
   }
+}
 
+async function fetchAndCacheLiveProfile(plate: string, now: number): Promise<VehicleProfile> {
   // --- Live fetch: 7 datasets fetched in parallel ---
   const [main, fuel, apk, defects, recalls, body, typeApprovals] = await Promise.all([
     getRdwDatasetByPlate("main", plate),
@@ -184,8 +195,15 @@ export async function getVehicleProfile(plate: string): Promise<VehicleProfile> 
     fetchTypeApprovalsSafe(plate)
   ]);
 
+  // Extract all unique defect codes to fetch their descriptions
+  const defectCodes = new Set<string>();
+  for (const item of apk) if (item.gebrek_identificatie) defectCodes.add(String(item.gebrek_identificatie));
+  for (const item of defects) if (item.gebrek_identificatie) defectCodes.add(String(item.gebrek_identificatie));
+  const defectDescriptions = await fetchDefectDescriptionsSafe(Array.from(defectCodes));
+
   const profile = toVehicleProfile({
     plate, fromCache: false,
+    defectDescriptions,
     main, fuel, apk, defects, recalls, body, typeApprovals
   });
 
@@ -202,4 +220,33 @@ export async function getVehicleProfile(plate: string): Promise<VehicleProfile> 
   }
 
   return profile;
+}
+
+export async function getVehicleProfile(plate: string): Promise<VehicleProfile> {
+  const now = Date.now();
+
+  // --- Cache read ---
+  try {
+    await connectMongo();
+    const cached = await VehicleCacheModel.findById(plate).lean<VehicleCacheDoc | null>();
+    if (cached && cached.expiresAt?.getTime() > now) {
+      // Trigger background revalidation (Stale-While-Revalidate)
+      // This will quickly fetch fresh data and update the database without blocking the user's current request.
+      fetchAndCacheLiveProfile(plate, now).catch(err => {
+        console.warn(`Background revalidation failed for plate ${plate}`, err);
+      });
+
+      const cachedData = cached.data as Partial<VehicleProfile>;
+      const raw = cachedData.raw;
+      if (raw?.main?.length) {
+        return { ...rehydrateFromRaw(plate, cachedData), fromCache: true };
+      }
+      return { ...withProfileDefaults(cachedData), fromCache: true };
+    }
+  } catch (error) {
+    console.warn("Vehicle cache read unavailable; falling back to live RDW fetch.", error);
+  }
+
+  // Fallback to synchronous fetching if no cache exists
+  return fetchAndCacheLiveProfile(plate, now);
 }
