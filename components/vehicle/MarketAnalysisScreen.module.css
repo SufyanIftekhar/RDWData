@@ -194,6 +194,20 @@
   margin-top: 8px;
 }
 
+.valueRange {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--muted-foreground);
+  margin-top: 6px;
+}
+
+.valueConfidence {
+  font-weight: 600;
+  color: var(--accent-foreground);
+}
+
 .chartContainer {
   margin-top: 16px;
   display: flex;

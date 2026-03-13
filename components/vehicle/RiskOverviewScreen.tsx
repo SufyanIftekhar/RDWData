@@ -120,17 +120,27 @@ export function RiskOverviewScreen({ plate }: Props) {
     { label: "Last update", value: data.fromCache ? "Cached" : "Live" }
   ];
 
+  const resolvedMileageVerdict =
+    data.enriched?.mileageVerdict && data.enriched.mileageVerdict !== "UNKNOWN"
+      ? data.enriched.mileageVerdict
+      : v.napVerdict ?? "Unknown";
+
+  const mileageTone =
+    typeof resolvedMileageVerdict === "string" && resolvedMileageVerdict.toLowerCase().includes("logisch")
+      ? "success"
+      : "warning";
+
   const riskCards = [
     {
       id: "mileage",
       title: "Mileage History",
-      status: v.napVerdict ?? "Unknown",
+      status: resolvedMileageVerdict,
       description:
-        "Recorded mileage checks show the RDW verdict from NAP registration.",
-      badge: v.napVerdict ? "Verified" : "Unknown",
-      trend: v.napVerdict ?? "No verdict",
+        "Mileage verdict is derived from APK history with weighted trend detection.",
+      badge: resolvedMileageVerdict !== "Unknown" ? "Verified" : "Unknown",
+      trend: resolvedMileageVerdict ?? "No verdict",
       icon: Gauge,
-      tone: v.napVerdict && v.napVerdict.toLowerCase().includes("logisch") ? "success" : "warning",
+      tone: mileageTone,
       link: "/mileage-history"
     },
     {

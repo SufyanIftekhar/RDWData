@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Inter, Outfit } from "next/font/google";
 import { StoreProvider } from "@/lib/store/provider";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import "./globals.css";
 
 const bodyFont = Inter({

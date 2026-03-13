@@ -12,7 +12,6 @@ import {
   Ruler,
   Settings,
   ShieldCheck,
-  Timer,
   Zap
 } from "lucide-react";
 import styles from "./TechnicalSpecsScreen.module.css";

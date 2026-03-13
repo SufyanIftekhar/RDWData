@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ElementType } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -341,9 +342,12 @@ export function VehicleResultScreen({ plate }: Props) {
             <div className={styles.heroCard}>
               <div className={styles.heroImagePanel}>
                 <div className={styles.heroImageWrapper}>
-                  <img
+                  <Image
                     alt="Vehicle exterior"
                     src="https://storage.googleapis.com/banani-generated-images/generated-images/e0649eef-2848-49b1-a352-34ec7d23ba0c.jpg"
+                    width={580}
+                    height={340}
+                    className="h-full w-full object-cover"
                   />
                   <div className={styles.imageOverlayTag}>
                     <Camera size={14} />

@@ -139,6 +139,6 @@ export function toVehicleProfile(input: {
     }
   };
 
-  profile.enriched = enrichVehicleData(profile.vehicle);
+  profile.enriched = enrichVehicleData(profile);
   return profile;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Briefcase, Store, User, Users } from "lucide-react";
+import { Briefcase, Store, User } from "lucide-react";
 import { useVehicleLookup } from "@/hooks/useVehicleLookup";
 import styles from "./OwnershipTimelineScreen.module.css";
 import { VehicleNavBar } from "./VehicleNavBar";

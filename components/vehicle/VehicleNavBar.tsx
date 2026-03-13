@@ -7,12 +7,12 @@ import styles from "./VehicleNavBar.module.css";
 
 const navItems = [
   { href: "", label: "Overview" },
+  { href: "technical-specs", label: "Tech Specs" },
   { href: "risk-overview", label: "Risk Overview" },
   { href: "mileage-history", label: "Mileage" },
   { href: "inspection-timeline", label: "APK Timeline" },
   { href: "damage-history", label: "Damage" },
   { href: "ownership-history", label: "Ownership" },
-  { href: "technical-specs", label: "Tech Specs" },
   { href: "market-analysis", label: "Market" }
 ];
 

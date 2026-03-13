@@ -38,6 +38,9 @@ export function MarketAnalysisScreen({ plate }: Props) {
   const [sellerPrice, setSellerPrice] = useState<string>("");
 
   const marketValue = data?.enriched?.estimatedValueNow ?? data?.vehicle.cataloguePrice ?? null;
+  const marketValueMin = data?.enriched?.estimatedValueMin ?? null;
+  const marketValueMax = data?.enriched?.estimatedValueMax ?? null;
+  const marketConfidence = data?.enriched?.marketValueConfidence ?? null;
 
   useEffect(() => {
     if (!sellerPrice && marketValue) {
@@ -56,7 +59,6 @@ export function MarketAnalysisScreen({ plate }: Props) {
 
     const seller = Number(sellerPrice.replace(/[^0-9]/g, ""));
     const diff = seller - marketValue;
-    const absDiff = Math.abs(diff);
 
     const verdictTone = diff > 500 ? "warning" : diff < -500 ? "success" : "fair";
     const verdictText = diff > 500
@@ -137,6 +139,14 @@ export function MarketAnalysisScreen({ plate }: Props) {
                 <TrendingUp size={16} />
                 {marketValue ? "High demand in current market" : "Awaiting market signal"}
               </div>
+              <div className={styles.valueRange}>
+                {marketValueMin != null && marketValueMax != null
+                  ? `80% range: ${formatCurrency(marketValueMin)} - ${formatCurrency(marketValueMax)}`
+                  : "80% range unavailable"}
+                {marketConfidence ? (
+                  <span className={styles.valueConfidence}>Confidence: {marketConfidence}</span>
+                ) : null}
+              </div>
             </div>
 
             <div className={styles.chartContainer}>
@@ -167,7 +177,7 @@ export function MarketAnalysisScreen({ plate }: Props) {
           <div className={`${styles.panel} ${styles.calcPanel}`}>
             <div className={styles.calcHeader}>
               <div className={styles.calcTitle}>Check a listing price</div>
-              <div className={styles.calcSubtitle}>Compare seller's price against our market data</div>
+              <div className={styles.calcSubtitle}>Compare seller’s price against our market data</div>
             </div>
 
             <div className={styles.inputGroup}>

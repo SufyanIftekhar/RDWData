@@ -4,12 +4,10 @@ import { useMemo } from "react";
 import {
   CheckCircle2,
   FileCheck2,
-  User,
   UserPlus,
   Wrench
 } from "lucide-react";
 import { useVehicleLookup } from "@/hooks/useVehicleLookup";
-import { formatDisplayPlate } from "@/lib/rdw/normalize";
 import styles from "./MileageTimelineScreen.module.css";
 import { VehicleNavBar } from "./VehicleNavBar";
 
@@ -181,7 +179,6 @@ export function MileageTimelineScreen({ plate }: Props) {
     );
   }
 
-  const displayPlate = formatDisplayPlate(normalized);
 
   const width = 800;
   const height = 300;
