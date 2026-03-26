@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./PremiumLock.module.css";
 import { Button } from "./Button";
-import { CheckCircle2, Lock, Sparkles } from "lucide-react";
+import { CheckCircle2, Lock } from "lucide-react";
 import { SubscriptionModal } from "./SubscriptionModal";
 
 
@@ -67,10 +67,10 @@ export function PremiumLock({ children, isLocked = true, featureName }: PremiumL
         </div>
       </div>
 
-      <SubscriptionModal 
-        isOpen={showModal} 
-        onClose={() => setShowModal(false)} 
-        featureName={featureName} 
+      <SubscriptionModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        featureName={featureName}
       />
     </div>
   );

@@ -137,21 +137,23 @@ export function InspectionTimelineScreen({ plate }: Props) {
       if (entry.mileage === null && mileage !== null) entry.mileage = mileage;
     }
 
-    const defectsByDate = new Map<string, { code: string; count: number }[]>();
-    for (const record of data.defects ?? []) {
+    const defectsByDate = new Map<string, Map<string, number>>();
+    const defectSources = [...(data.defects ?? []), ...(data.inspections ?? [])];
+    for (const record of defectSources) {
       const rawDate = parseDate(record);
       const date = normalizeDate(rawDate);
       const code = parseDefectCode(record);
       if (!date || !code) continue;
       const count = Number(record.aantal_gebreken_geconstateerd ?? 1);
-      if (!defectsByDate.has(date)) defectsByDate.set(date, []);
-      defectsByDate.get(date)!.push({ code, count: Number.isFinite(count) ? count : 1 });
+      if (!defectsByDate.has(date)) defectsByDate.set(date, new Map<string, number>());
+      const byCode = defectsByDate.get(date)!;
+      byCode.set(code, (byCode.get(code) ?? 0) + (Number.isFinite(count) ? count : 1));
     }
 
     const defectCounts: Record<string, number> = {};
-    for (const list of defectsByDate.values()) {
-      for (const item of list) {
-        defectCounts[item.code] = (defectCounts[item.code] ?? 0) + 1;
+    for (const byCode of defectsByDate.values()) {
+      for (const [code] of byCode) {
+        defectCounts[code] = (defectCounts[code] ?? 0) + 1;
       }
     }
 
@@ -162,10 +164,10 @@ export function InspectionTimelineScreen({ plate }: Props) {
         ? "advisory"
         : "pass";
 
-      const defects = (defectsByDate.get(entry.date) ?? []).map((item) => ({
-        code: item.code,
-        description: data.defectDescriptions[item.code] ?? "Defect recorded",
-        recurring: (defectCounts[item.code] ?? 0) > 1
+      const defects = Array.from(defectsByDate.get(entry.date)?.entries() ?? []).map(([code]) => ({
+        code,
+        description: data.defectDescriptions[code] ?? "Defect recorded",
+        recurring: (defectCounts[code] ?? 0) > 1
       }));
 
       const notes = result === "fail"
