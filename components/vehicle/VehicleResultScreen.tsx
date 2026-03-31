@@ -413,7 +413,11 @@ export function VehicleResultScreen({ plate }: Props) {
                 <div className={styles.heroImageWrapper}>
                   <Image
                     alt={`${v.brand} ${v.tradeName}`}
-                    src={getVehicleImageUrl(v.brand, v.tradeName, { angle: currentAngle, zoomtype: "relative" })}
+                    src={getVehicleImageUrl(v.brand, v.tradeName, {
+                      angle: currentAngle,
+                      zoomtype: "relative",
+                      color: v.color?.primary ?? null
+                    })}
                     width={580}
                     height={340}
                     className="h-full w-full object-contain transition-all duration-500"

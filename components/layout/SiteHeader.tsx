@@ -22,7 +22,7 @@ export function SiteHeader() {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3 md:px-10">
         <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-wide text-slate-900">
           <ShieldCheck className="h-6 w-6 text-brand-600" />
-          AutoCheck
+          Kentekenrapport
         </Link>
 
         <nav className="hidden items-center gap-4 md:flex" aria-label="Primary">

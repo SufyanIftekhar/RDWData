@@ -1,4 +1,4 @@
-"use client";
+ï»¿"use client";
 
 import Image from "next/image";
 import type { VehicleProfile } from "@/lib/rdw/types";
@@ -86,7 +86,11 @@ export function VehicleCard({ profile }: Props) {
       <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
         <Image
           alt={`${v.brand} ${v.tradeName}`}
-          src={getVehicleImageUrl(v.brand, v.tradeName, { angle: "01", zoomtype: "relative" })}
+          src={getVehicleImageUrl(v.brand, v.tradeName, {
+            angle: "01",
+            zoomtype: "relative",
+            color: v.color?.primary ?? null
+          })}
           width={400}
           height={225}
           className="h-full w-full object-contain"
@@ -100,7 +104,7 @@ export function VehicleCard({ profile }: Props) {
             {v.brand ?? "-"} {v.tradeName ?? ""}
           </h2>
           <p className="mt-0.5 text-xs text-slate-400">
-            {v.year ?? "-"} · {v.bodyType ?? "-"} · {v.color?.primary ?? "-"}
+            {v.year ?? "-"} Â· {v.bodyType ?? "-"} Â· {v.color?.primary ?? "-"}
           </p>
         </div>
         <span className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold
@@ -239,3 +243,4 @@ export function VehicleCard({ profile }: Props) {
     </div>
   );
 }
+

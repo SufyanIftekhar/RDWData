@@ -5,6 +5,26 @@ interface ImageOptions {
   zoomtype?: "relative" | "fullscreen";
   width?: number;
   zoomlevel?: number;
+  color?: string | null;
+}
+
+function normalizeColor(color: string | null | undefined): string | null {
+  if (!color) return null;
+  const raw = color.trim().toLowerCase();
+  const map: Record<string, string> = {
+    blauw: "blue",
+    zwart: "black",
+    wit: "white",
+    grijs: "gray",
+    groen: "green",
+    rood: "red",
+    geel: "yellow",
+    bruin: "brown",
+    zilver: "silver",
+    oranje: "orange",
+    paars: "purple"
+  };
+  return map[raw] ?? raw;
 }
 
 /**
@@ -25,7 +45,8 @@ export function getVehicleImageUrl(
     angle = "01",
     zoomtype = "relative",
     width = 800,
-    zoomlevel = 30
+    zoomlevel = 30,
+    color
   } = options;
 
   const url = new URL("https://cdn.imagin.studio/getImage");
@@ -42,6 +63,12 @@ export function getVehicleImageUrl(
   url.searchParams.set("width", Math.min(width, 800).toString());
   url.searchParams.set("zoomlevel", Math.min(zoomlevel, 30).toString());
   url.searchParams.set("filetype", "jpeg");
+
+  const paint = normalizeColor(color);
+  if (paint) {
+    // Ask IMAGIN for the closest matching body paint instead of default grey.
+    url.searchParams.set("paintDescription", paint);
+  }
 
   return url.toString();
 }
