@@ -26,7 +26,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { formatDisplayPlate } from "@/lib/rdw/normalize";
 import { getVehicleImageUrl } from "@/lib/utils/imagin";
 import { useI18n } from "@/lib/i18n/context";
-import { hasPaidAccessForPlate, hasServerPaidAccessForPlate } from "@/lib/payments/access";
+import { hasPaidAccessForPlate } from "@/lib/payments/access";
 import styles from "./VehicleResultScreen.module.css";
 import { VehicleNavBar } from "./VehicleNavBar";
 import { SubscriptionModal } from "@/components/ui/SubscriptionModal";
@@ -353,22 +353,11 @@ export function VehicleResultScreen({ plate }: Props) {
 
   const normalizedPlate = normalized;
   useEffect(() => {
-    let active = true;
     if (!normalizedPlate) {
       setIsPaidForPlate(false);
-      return () => {
-        active = false;
-      };
+      return;
     }
-    const localPaid = hasPaidAccessForPlate(normalizedPlate);
-    setIsPaidForPlate(localPaid);
-    void hasServerPaidAccessForPlate(normalizedPlate).then((serverPaid) => {
-      if (!active) return;
-      if (serverPaid) setIsPaidForPlate(true);
-    });
-    return () => {
-      active = false;
-    };
+    setIsPaidForPlate(hasPaidAccessForPlate(normalizedPlate));
   }, [normalizedPlate]);
 
   if (!isValid || isError) return <ErrorScreen plate={plate} locale={locale} />;
@@ -379,16 +368,23 @@ export function VehicleResultScreen({ plate }: Props) {
   const displayPlate = formatDisplayPlate(normalizedPlate);
 
   const downloadReport = () => {
-    const payload = JSON.stringify(data, null, 2);
-    const blob = new Blob([payload], { type: "application/json;charset=utf-8" });
-    const url = window.URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `kentekenrapport-${normalizedPlate}.json`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    window.URL.revokeObjectURL(url);
+    try {
+      printVehiclePdfReport({
+        plate: normalizedPlate,
+        locale,
+        generatedAt: new Date(),
+        score,
+        data
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : locale === "nl"
+          ? "Kon PDF rapport niet genereren."
+          : "Unable to generate PDF report.";
+      window.alert(message);
+    }
   };
 
   const handleDownload = () => {
@@ -599,4 +595,137 @@ export function VehicleResultScreen({ plate }: Props) {
       />
     </div>
   );
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function printVehiclePdfReport(args: {
+  plate: string;
+  locale: "nl" | "en";
+  generatedAt: Date;
+  score: ScoreResult;
+  data: unknown;
+}) {
+  const { plate, locale, generatedAt, score, data } = args;
+  const d = data as Record<string, unknown>;
+  const vehicle = (d.vehicle ?? {}) as Record<string, unknown>;
+  const enriched = (d.enriched ?? {}) as Record<string, unknown>;
+  const inspections = Array.isArray(d.inspections) ? (d.inspections as Array<Record<string, unknown>>) : [];
+  const defects = Array.isArray(d.defects) ? (d.defects as Array<Record<string, unknown>>) : [];
+  const recalls = Array.isArray(d.recalls) ? (d.recalls as Array<Record<string, unknown>>) : [];
+  const defectDescriptions = (d.defectDescriptions ?? {}) as Record<string, string>;
+
+  const escape = (value: unknown) => escapeHtml(String(value ?? "-"));
+  const reportTitle = locale === "nl" ? "Voertuigrapport" : "Vehicle Report";
+  const generatedLabel = locale === "nl" ? "Gegenereerd op" : "Generated at";
+  const jsonRaw = escapeHtml(JSON.stringify(data, null, 2));
+
+  const inspectionsRows = inspections
+    .map(
+      (item) =>
+        `<tr><td>${escape(item.meld_datum_door_keuringsinstantie_dt ?? item.meld_datum_door_keuringsinstantie ?? "-")}</td><td>${escape(item.gebrek_identificatie ?? "-")}</td><td>${escape(item.soort_erkenning_omschrijving ?? "-")}</td><td>${escape(item.aantal_gebreken_geconstateerd ?? "-")}</td></tr>`
+    )
+    .join("");
+
+  const defectsRows = defects
+    .map((item) => {
+      const defectCode = String(item.gebrek_identificatie ?? "-");
+      return `<tr><td>${escape(defectCode)}</td><td>${escape(item.gebrek_omschrijving ?? defectDescriptions[defectCode] ?? "-")}</td><td>${escape(item.toelichting ?? "-")}</td></tr>`;
+    })
+    .join("");
+
+  const recallsRows = recalls
+    .map(
+      (item) =>
+        `<tr><td>${escape(item.campagnenummer ?? "-")}</td><td>${escape(item.omschrijving_defect ?? "-")}</td><td>${escape(item.status ?? "-")}</td></tr>`
+    )
+    .join("");
+
+  const html = `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>${escape(reportTitle)} ${escape(plate)}</title>
+  <style>
+    body { font-family: Arial, sans-serif; color:#0f172a; margin:24px; line-height:1.4; }
+    h1,h2 { margin:0 0 8px; }
+    h1 { font-size:24px; }
+    h2 { font-size:16px; margin-top:24px; border-bottom:1px solid #e2e8f0; padding-bottom:4px; }
+    .meta { color:#475569; font-size:12px; margin-bottom:16px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .card { border:1px solid #e2e8f0; border-radius:8px; padding:10px; }
+    .label { font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:.04em; }
+    .value { font-size:14px; font-weight:600; margin-top:2px; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+    th,td { border:1px solid #e2e8f0; text-align:left; padding:6px; vertical-align:top; }
+    th { background:#f8fafc; }
+    pre { white-space:pre-wrap; word-break:break-word; border:1px solid #e2e8f0; border-radius:8px; padding:12px; background:#f8fafc; font-size:11px; }
+    @page { size:A4; margin:14mm; }
+  </style>
+</head>
+<body>
+  <h1>${escape(reportTitle)} - ${escape(formatDisplayPlate(plate))}</h1>
+  <div class="meta">${escape(generatedLabel)}: ${escape(generatedAt.toLocaleString(locale === "nl" ? "nl-NL" : "en-US"))}</div>
+
+  <h2>${escape(locale === "nl" ? "Samenvatting" : "Summary")}</h2>
+  <div class="grid">
+    <div class="card"><div class="label">${escape(locale === "nl" ? "Voertuig" : "Vehicle")}</div><div class="value">${escape(`${String(vehicle.brand ?? "")} ${String(vehicle.tradeName ?? "")}`.trim())}</div></div>
+    <div class="card"><div class="label">${escape(locale === "nl" ? "Bouwjaar" : "Year")}</div><div class="value">${escape(vehicle.year ?? "-")}</div></div>
+    <div class="card"><div class="label">${escape(locale === "nl" ? "Brandstof" : "Fuel")}</div><div class="value">${escape(vehicle.fuelType ?? "-")}</div></div>
+    <div class="card"><div class="label">Score</div><div class="value">${escape(score.score)} / 100 (${escape(score.label)})</div></div>
+  </div>
+
+  <h2>${escape(locale === "nl" ? "Technische gegevens" : "Technical details")}</h2>
+  <table>
+    <tr><th>${escape(locale === "nl" ? "Veld" : "Field")}</th><th>${escape(locale === "nl" ? "Waarde" : "Value")}</th></tr>
+    <tr><td>APK</td><td>${escape(vehicle.apkExpiryDate ?? "-")}</td></tr>
+    <tr><td>${escape(locale === "nl" ? "Leeggewicht" : "Empty weight")}</td><td>${escape((vehicle.weight as Record<string, unknown> | undefined)?.empty ?? "-")} kg</td></tr>
+    <tr><td>CO2</td><td>${escape(vehicle.co2 ?? "-")}</td></tr>
+    <tr><td>${escape(locale === "nl" ? "Energielabel" : "Energy label")}</td><td>${escape(vehicle.energyLabel ?? "-")}</td></tr>
+    <tr><td>${escape(locale === "nl" ? "Onderhoudsrisico" : "Maintenance risk")}</td><td>${escape(enriched.maintenanceRiskScore ?? "-")}</td></tr>
+  </table>
+
+  <h2>${escape(locale === "nl" ? "APK inspecties" : "APK inspections")}</h2>
+  <table>
+    <tr><th>${escape(locale === "nl" ? "Datum" : "Date")}</th><th>${escape(locale === "nl" ? "Gebrek code" : "Defect code")}</th><th>${escape(locale === "nl" ? "Type" : "Type")}</th><th>${escape(locale === "nl" ? "Aantal" : "Count")}</th></tr>
+    ${inspectionsRows || `<tr><td colspan="4">-</td></tr>`}
+  </table>
+
+  <h2>${escape(locale === "nl" ? "Defecten" : "Defects")}</h2>
+  <table>
+    <tr><th>${escape(locale === "nl" ? "Code" : "Code")}</th><th>${escape(locale === "nl" ? "Omschrijving" : "Description")}</th><th>${escape(locale === "nl" ? "Toelichting" : "Notes")}</th></tr>
+    ${defectsRows || `<tr><td colspan="3">-</td></tr>`}
+  </table>
+
+  <h2>${escape(locale === "nl" ? "Terugroepacties" : "Recalls")}</h2>
+  <table>
+    <tr><th>${escape(locale === "nl" ? "Campagne" : "Campaign")}</th><th>${escape(locale === "nl" ? "Defect" : "Defect")}</th><th>Status</th></tr>
+    ${recallsRows || `<tr><td colspan="3">-</td></tr>`}
+  </table>
+
+  <h2>${escape(locale === "nl" ? "Volledige ruwe data (JSON)" : "Full raw data (JSON)")}</h2>
+  <pre>${jsonRaw}</pre>
+</body>
+</html>`;
+
+  const win = window.open("", "_blank", "noopener,noreferrer");
+  if (!win) {
+    throw new Error(
+      locale === "nl"
+        ? "Popup geblokkeerd. Sta popups toe om de PDF te downloaden."
+        : "Popup blocked. Allow popups to download the PDF."
+    );
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  win.print();
 }

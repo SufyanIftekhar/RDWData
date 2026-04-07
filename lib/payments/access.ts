@@ -1,41 +1,20 @@
-const STORAGE_KEY = "kentekenrapport_paid_plates";
+const sessionPaidPlates = new Set<string>();
 
 function normalizePlate(plate: string): string {
   return plate.replace(/[^A-Z0-9]/gi, "").toUpperCase();
 }
 
-function readPaidPlateSet(): Set<string> {
-  if (typeof window === "undefined") return new Set<string>();
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) return new Set<string>();
-  try {
-    const parsed = JSON.parse(raw) as string[];
-    return new Set(parsed.map(normalizePlate));
-  } catch {
-    return new Set<string>();
-  }
-}
-
-function writePaidPlateSet(set: Set<string>) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)));
-}
-
 export function hasPaidAccessForPlate(plate: string): boolean {
-  return readPaidPlateSet().has(normalizePlate(plate));
+  if (typeof window === "undefined") return false;
+  return sessionPaidPlates.has(normalizePlate(plate));
 }
 
 export function grantPaidAccessForPlate(plate: string) {
-  const set = readPaidPlateSet();
-  set.add(normalizePlate(plate));
-  writePaidPlateSet(set);
+  if (typeof window === "undefined") return;
+  sessionPaidPlates.add(normalizePlate(plate));
 }
 
-export async function hasServerPaidAccessForPlate(plate: string): Promise<boolean> {
-  const normalized = normalizePlate(plate);
-  if (!normalized) return false;
-  const response = await fetch(`/api/payments/access/${normalized}`, { cache: "no-store" });
-  if (!response.ok) return false;
-  const payload = (await response.json()) as { paid?: boolean };
-  return Boolean(payload.paid);
+export function clearPaidAccessForPlate(plate: string): void {
+  if (typeof window === "undefined") return;
+  sessionPaidPlates.delete(normalizePlate(plate));
 }

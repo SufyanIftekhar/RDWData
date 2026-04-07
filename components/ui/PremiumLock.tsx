@@ -4,7 +4,7 @@ import { Button } from "./Button";
 import { CheckCircle2, Lock } from "lucide-react";
 import { SubscriptionModal } from "./SubscriptionModal";
 import { useI18n } from "@/lib/i18n/context";
-import { hasPaidAccessForPlate, hasServerPaidAccessForPlate } from "@/lib/payments/access";
+import { hasPaidAccessForPlate } from "@/lib/payments/access";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { PublicSiteSettings } from "@/lib/site-settings/defaults";
 
@@ -26,18 +26,8 @@ export function PremiumLock({ children, isLocked = true, featureName, plate, sec
 
   useEffect(() => {
     if (!plate) return;
-    let active = true;
     const localPaid = hasPaidAccessForPlate(plate);
     setIsUnlockedForPlate(localPaid);
-
-    void hasServerPaidAccessForPlate(plate).then((serverPaid) => {
-      if (!active) return;
-      if (serverPaid) setIsUnlockedForPlate(true);
-    });
-
-    return () => {
-      active = false;
-    };
   }, [plate]);
 
   const lockByAdmin = sectionKey ? settings.lockSections[sectionKey] : isLocked;
