@@ -1,8 +1,9 @@
 "use client";
 
+import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CarFront, Lock } from "lucide-react";
+import { CarFront, Lock, ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import styles from "./VehicleNavBar.module.css";
 
@@ -13,9 +14,15 @@ type Props = {
 
 export function VehicleNavBar({ plate, subtitle = "Open detailed reports" }: Props) {
   const { locale } = useI18n();
-  const resolvedSubtitle = subtitle === "Open detailed reports" ? (locale === "nl" ? "Open gedetailleerde rapporten" : subtitle) : subtitle;
+  const resolvedSubtitle =
+    subtitle === "Open detailed reports"
+      ? locale === "nl"
+        ? "Open gedetailleerde rapporten"
+        : subtitle
+      : subtitle;
   const pathname = usePathname() ?? "";
   const base = `/search/${plate}`;
+
   const navItems =
     locale === "nl"
       ? [
@@ -29,7 +36,7 @@ export function VehicleNavBar({ plate, subtitle = "Open detailed reports" }: Pro
           { href: "market-analysis", label: "Markt", isPremium: true },
           { href: "negotiation-copilot", label: "Onderhandelcoach", isPremium: true },
           { href: "apk-failure-intelligence", label: "APK Intelligence", isPremium: true },
-          { href: "post-purchase-watch", label: "Watch mode", isPremium: true }
+          { href: "post-purchase-watch", label: "Watch mode", isPremium: true },
         ]
       : [
           { href: "", label: "Overview", isPremium: false },
@@ -42,37 +49,100 @@ export function VehicleNavBar({ plate, subtitle = "Open detailed reports" }: Pro
           { href: "market-analysis", label: "Market", isPremium: true },
           { href: "negotiation-copilot", label: "Negotiation Copilot", isPremium: true },
           { href: "apk-failure-intelligence", label: "APK Intelligence", isPremium: true },
-          { href: "post-purchase-watch", label: "Watch mode", isPremium: true }
+          { href: "post-purchase-watch", label: "Watch mode", isPremium: true },
         ];
+
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [canLeft, setCanLeft]   = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const updateArrows = useCallback(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    updateArrows();
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    const ro = new ResizeObserver(updateArrows);
+    ro.observe(el);
+    return () => { el.removeEventListener("scroll", updateArrows); ro.disconnect(); };
+  }, [updateArrows]);
+
+  // Scroll active pill into view on mount / route change
+  useEffect(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    const active = el.querySelector<HTMLElement>("[data-active]");
+    if (active) active.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" });
+  }, [pathname]);
+
+  const scroll = (dir: "left" | "right") => {
+    const el = stripRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === "left" ? -160 : 160, behavior: "smooth" });
+  };
 
   return (
     <div className={styles.topbar}>
+      {/* Brand block */}
       <div className={styles.brandBlock}>
         <div className={styles.brandMark}>
           <CarFront size={18} />
         </div>
         <div className={styles.brandCopy}>
-          <div className={styles.brandTitle}>{locale === "nl" ? "Voertuigoverzicht" : "Vehicle Overview"}</div>
+          <div className={styles.brandTitle}>
+            {locale === "nl" ? "Voertuigoverzicht" : "Vehicle Overview"}
+          </div>
           <div className={styles.brandSubtitle}>{resolvedSubtitle}</div>
         </div>
       </div>
-      <div className={styles.topbarRight}>
-        {navItems.map((item) => {
-          const href = item.href ? `${base}/${item.href}` : base;
-          const isActive = pathname === href || pathname === `${href}/`;
-          return (
-            <Link
-              key={item.href}
-              href={href}
-              className={`${styles.navPill} ${isActive ? styles.navPillActive : ""} ${item.isPremium ? styles.navPillPremium : ""}`}
-            >
-              {item.label}
-              {item.isPremium && <Lock size={10} className={styles.lockIcon} />}
-            </Link>
-          );
-        })}
+
+      {/* Scroll controls + strip */}
+      <div className={styles.navArea}>
+        {/* Left arrow */}
+        <button
+          onClick={() => scroll("left")}
+          className={styles.scrollBtn}
+          aria-label="Scroll left"
+          style={{ opacity: canLeft ? 1 : 0, pointerEvents: canLeft ? "auto" : "none" }}
+        >
+          <ChevronLeft size={15} />
+        </button>
+
+        {/* Scrollable pill strip */}
+        <div className={styles.topbarRight} ref={stripRef}>
+          {navItems.map((item) => {
+            const href = item.href ? `${base}/${item.href}` : base;
+            const isActive = pathname === href || pathname === `${href}/`;
+            return (
+              <Link
+                key={item.href}
+                href={href}
+                data-active={isActive || undefined}
+                className={`${styles.navPill} ${isActive ? styles.navPillActive : ""} ${item.isPremium ? styles.navPillPremium : ""}`}
+              >
+                {item.label}
+                {item.isPremium && <Lock size={10} className={styles.lockIcon} />}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Right arrow */}
+        <button
+          onClick={() => scroll("right")}
+          className={styles.scrollBtn}
+          aria-label="Scroll right"
+          style={{ opacity: canRight ? 1 : 0, pointerEvents: canRight ? "auto" : "none" }}
+        >
+          <ChevronRight size={15} />
+        </button>
       </div>
     </div>
   );
 }
-

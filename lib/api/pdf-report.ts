@@ -440,18 +440,54 @@ function drawHeroVisuals(args: {
   const vMax = valuation?.estimatedValueMax ?? toNumber(asRow(args.data.enriched).estimatedValueMax);
   args.page.drawText(args.locale === "nl" ? "Marktwaarde (AI)" : "Market value (AI)", {
     x: leftX + 10,
-    y: cardY + 28,
+    y: cardY + 45,
     font: args.bold,
     size: 10,
     color: rgb(0.08, 0.2, 0.45)
   });
-  args.page.drawText(`${currency(vNow)}  (${currency(vMin)} - ${currency(vMax)})`, {
-    x: leftX + 10,
-    y: cardY + 13,
-    font: args.regular,
-    size: 9,
-    color: rgb(0.14, 0.24, 0.36)
-  });
+
+  if (vNow && vMin && vMax && vMax > vMin) {
+    const barWidth = leftW - 20;
+    const barY = cardY + 28;
+    const rangeMin = vMin * 0.9;
+    const rangeMax = vMax * 1.1;
+    const diff = rangeMax - rangeMin;
+    
+    // Background track
+    args.page.drawLine({
+      start: { x: leftX + 10, y: barY },
+      end: { x: leftX + 10 + barWidth, y: barY },
+      thickness: 6,
+      color: rgb(0.9, 0.92, 0.96),
+    });
+
+    // Expected Range
+    const startX = leftX + 10 + ((vMin - rangeMin) / diff) * barWidth;
+    const endX = leftX + 10 + ((vMax - rangeMin) / diff) * barWidth;
+    args.page.drawLine({
+      start: { x: startX, y: barY },
+      end: { x: endX, y: barY },
+      thickness: 6,
+      color: rgb(0.2, 0.6, 1),
+    });
+
+    // Current Marker
+    const px = leftX + 10 + Math.max(0, Math.min(barWidth, ((vNow - rangeMin) / diff) * barWidth));
+    args.page.drawCircle({ x: px, y: barY, size: 5, color: rgb(0.05, 0.15, 0.3) });
+
+    // Labels
+    args.page.drawText(currency(vMin), { x: startX, y: barY - 14, font: args.regular, size: 8, color: rgb(0.4, 0.5, 0.6) });
+    args.page.drawText(currency(vMax), { x: endX - 25, y: barY - 14, font: args.regular, size: 8, color: rgb(0.4, 0.5, 0.6) });
+    args.page.drawText(currency(vNow), { x: px - 15, y: barY + 8, font: args.bold, size: 9, color: rgb(0.05, 0.15, 0.3) });
+  } else {
+    args.page.drawText(`${currency(vNow)}  (${currency(vMin)} - ${currency(vMax)})`, {
+      x: leftX + 10,
+      y: cardY + 28,
+      font: args.regular,
+      size: 9,
+      color: rgb(0.14, 0.24, 0.36)
+    });
+  }
 
   if (args.image) {
     const imageW = rightW - 16;

@@ -54,6 +54,28 @@ export type PublicSiteSettings = {
       legalLinks: string[];
     };
   };
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+    ogImage: string;
+    googleAnalyticsId: string;
+    faviconUrl: string;
+  };
+  appearance: {
+    primaryColor: string;
+    accentColor: string;
+    fontFamily: string;
+    logoUrl: string;
+    logoText: string;
+  };
+  email: {
+    fromName: string;
+    fromAddress: string;
+    reportSubjectNl: string;
+    reportSubjectEn: string;
+    welcomeBodyNl: string;
+    welcomeBodyEn: string;
+  };
 };
 
 export const defaultSiteSettings: PublicSiteSettings = {
@@ -168,5 +190,27 @@ export const defaultSiteSettings: PublicSiteSettings = {
       companyLinks: ["About Us", "Careers", "Contact", "Partners"],
       legalLinks: ["Terms of Service", "Privacy Policy", "Cookie Policy", "Data Sources"]
     }
+  },
+  seo: {
+    metaTitle: "Kentekenrapport - Nederlandse Kentekeninzichten",
+    metaDescription: "Directe Nederlandse kentekencheck. Voertuigprofiel, APK-status, inspectiehistorie en marktwaarde.",
+    ogImage: "",
+    googleAnalyticsId: "",
+    faviconUrl: ""
+  },
+  appearance: {
+    primaryColor: "#2563eb",
+    accentColor: "#dbeafe",
+    fontFamily: "Inter",
+    logoUrl: "",
+    logoText: "Kentekenrapport"
+  },
+  email: {
+    fromName: "Kentekenrapport",
+    fromAddress: "noreply@kentekenrapport.nl",
+    reportSubjectNl: "Jouw kentekenrapport",
+    reportSubjectEn: "Your vehicle report",
+    welcomeBodyNl: "Bedankt voor het gebruiken van Kentekenrapport. Uw rapport is bijgevoegd.",
+    welcomeBodyEn: "Thank you for using Kentekenrapport. Your report is attached."
   }
 };

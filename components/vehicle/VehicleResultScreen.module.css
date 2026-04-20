@@ -30,11 +30,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 24px 48px;
+  padding: 16px 14px 48px;
   background:
     radial-gradient(circle at top left, var(--accent) 0, transparent 26%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0) 220px);
 }
+
 
 .contentContainer {
   width: 100%;
@@ -287,18 +288,19 @@
 }
 
 .carTitle {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
 .carSubtitle {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--muted-foreground);
   max-width: 620px;
 }
+
 
 .carSpecsChips {
   display: flex;
@@ -601,6 +603,31 @@
   text-overflow: ellipsis;
 }
 
+.spinningIcon {
+  animation: spin 1s linear infinite;
+}
+
+.tooltipText {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--primary);
+  background: var(--accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
 .loadingScreen,
 .errorScreen {
   min-height: 100vh;
@@ -713,7 +740,15 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 10px 10px 40px;
+  }
+
+  .heroShell {
+    padding: 12px;
+    border-radius: 16px;
+  }
 
   .imageMetaRow {
     grid-template-columns: minmax(0, 1fr);
@@ -732,11 +767,48 @@
   }
 
   .licensePlate {
-    font-size: 28px;
-    padding: 8px 18px;
+    font-size: 22px;
+    padding: 6px 14px;
   }
 
   .carTitle {
-    font-size: 26px;
+    font-size: 20px;
+  }
+
+  .carSubtitle {
+    font-size: 12px;
+  }
+
+  .chip {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+
+  .scoreValue {
+    font-size: 38px;
+  }
+
+  .scoreModule {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .insightCard {
+    padding: 12px 14px;
+  }
+
+  .insightTitle {
+    font-size: 11px;
+  }
+
+  .insightValue {
+    font-size: 13px;
+  }
+
+  .actionPrimary,
+  .actionSecondary {
+    font-size: 13px;
+    padding: 12px 12px;
   }
 }
+

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -6,6 +6,7 @@ import {
   Pencil,
   TrendingUp
 } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { useVehicleLookup } from "@/hooks/useVehicleLookup";
 import { formatDisplayPlate } from "@/lib/rdw/normalize";
 import styles from "./MarketAnalysisScreen.module.css";
@@ -86,24 +87,24 @@ export function MarketAnalysisScreen({ plate }: Props) {
     };
   }, [marketValue, sellerPrice, locale]);
 
-  const chartPoints = useMemo(() => {
+  const chartPoints = useMemo((): Array<{ label: string; value: number | null }> => {
     const year = new Date().getFullYear();
     if (!marketValue) {
       return [
-        { label: year - 4, value: null },
-        { label: year - 3, value: null },
-        { label: year - 2, value: null },
-        { label: year - 1, value: null },
+        { label: String(year - 4), value: null },
+        { label: String(year - 3), value: null },
+        { label: String(year - 2), value: null },
+        { label: String(year - 1), value: null },
         { label: locale === "nl" ? "Vandaag" : "Today", value: null }
       ];
     }
     const start = marketValue * 1.65;
     const step = (start - marketValue) / 4;
     return [
-      { label: year - 4, value: Math.round(start) },
-      { label: year - 3, value: Math.round(start - step) },
-      { label: year - 2, value: Math.round(start - step * 2) },
-      { label: year - 1, value: Math.round(start - step * 3) },
+      { label: String(year - 4), value: Math.round(start) },
+      { label: String(year - 3), value: Math.round(start - step) },
+      { label: String(year - 2), value: Math.round(start - step * 2) },
+      { label: String(year - 1), value: Math.round(start - step * 3) },
       { label: locale === "nl" ? "Vandaag" : "Today", value: Math.round(marketValue) }
     ];
   }, [marketValue, locale]);
@@ -192,21 +193,22 @@ export function MarketAnalysisScreen({ plate }: Props) {
                   <div className={styles.chartNote}>{locale === "nl" ? "Gebaseerd op vergelijkbare advertenties" : "Based on similar listings"}</div>
                 </div>
 
-                <div className={styles.chartMock}>
-                  {chartPoints.map((point, index) => {
-                    const maxValue = Math.max(...chartPoints.map((p) => p.value ?? 0), 1);
-                    const height = point.value ? `${(point.value / maxValue) * 90}%` : "20%";
-                    const isCurrent = index === chartPoints.length - 1;
-                    return (
-                      <div key={String(point.label)} className={styles.barGroup}>
-                        <div className={styles.barValue}>{point.value ? formatCurrency(point.value) : "-"}</div>
-                        <div className={`${styles.bar} ${isCurrent ? styles.barCurrent : ""}`} style={{ height }} />
-                        <div className={`${styles.barLabel} ${isCurrent ? styles.barLabelCurrent : ""}`}>
-                          {point.label}
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className={styles.chartInteractive}>
+                  <ResponsiveContainer width="100%" height={240}>
+                    <AreaChart data={chartPoints} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.4} />
+                      <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} tickFormatter={(v) => `€${v}`} />
+                      <Tooltip formatter={(value: any) => formatCurrency(Number(value))} labelStyle={{ color: '#0f172a' }} itemStyle={{ color: '#2563eb', fontWeight: 'bold' }} />
+                      <Area type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>

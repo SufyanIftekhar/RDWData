@@ -176,14 +176,25 @@ export function PostPurchaseWatchScreen({ plate }: Props) {
           <div className={styles.panel}>
             <h3>{locale === "nl" ? "Alertgeschiedenis" : "Alert history"}</h3>
             {watchItem?.alerts?.length ? (
-              <div className={styles.alertList}>
-                {watchItem.alerts.map((alert, index) => (
-                  <div className={styles.alertItem} key={`${alert.createdAt}-${index}`}>
-                    <div className={styles.alertType}>{alert.type}</div>
-                    <div className={styles.alertMessage}>{alert.message}</div>
-                    <div className={styles.alertTime}>{new Date(alert.createdAt).toLocaleString("nl-NL")}</div>
-                  </div>
-                ))}
+              <div className={styles.timeline}>
+                {watchItem.alerts.map((alert, index) => {
+                  const Icon = alert.type === "RECALL_CHANGED" ? AlertCircle : alert.type === "APK_CHANGED" ? CheckCircle2 : BellRing;
+                  return (
+                    <div className={styles.timelineItem} key={`${alert.createdAt}-${index}`}>
+                      <div className={styles.timelineIconLine}>
+                        <div className={styles.timelineIconWrapper}>
+                          <Icon size={16} />
+                        </div>
+                        {index < watchItem.alerts.length - 1 && <div className={styles.timelineLine} />}
+                      </div>
+                      <div className={styles.timelineContent}>
+                        <div className={styles.timelineType}>{alert.type.replace('_', ' ')}</div>
+                        <div className={styles.timelineMessage}>{alert.message}</div>
+                        <div className={styles.timelineTime}>{new Date(alert.createdAt).toLocaleString("nl-NL")}</div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <p className={styles.empty}>{locale === "nl" ? "Nog geen alerts." : "No alerts yet."}</p>

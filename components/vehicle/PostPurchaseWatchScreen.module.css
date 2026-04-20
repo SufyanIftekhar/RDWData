@@ -11,11 +11,16 @@
 .panel h3 { margin: 0 0 10px; font-size: 18px; font-weight: 800; color: #0f172a; }
 .statusGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .statusCard { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: inline-flex; align-items: center; gap: 6px; color: #1f2937; font-size: 14px; }
-.alertList { display: grid; gap: 8px; }
-.alertItem { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; }
-.alertType { font-size: 12px; font-weight: 800; color: #1e3a8a; }
-.alertMessage { margin-top: 4px; font-size: 14px; color: #334155; }
-.alertTime { margin-top: 4px; font-size: 12px; color: #64748b; }
+.timeline { display: flex; flex-direction: column; gap: 0; padding: 10px 0; }
+.timelineItem { display: flex; gap: 16px; position: relative; }
+.timelineIconLine { display: flex; flex-direction: column; align-items: center; }
+.timelineIconWrapper { width: 32px; height: 32px; border-radius: 50%; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.timelineLine { width: 2px; flex: 1; background: #e2e8f0; margin: 4px 0; }
+.timelineContent { padding-bottom: 24px; display: flex; flex-direction: column; gap: 4px; }
+.timelineItem:last-child .timelineContent { padding-bottom: 0; }
+.timelineType { font-weight: 700; font-size: 14px; color: #1e3a8a; text-transform: capitalize; }
+.timelineMessage { font-size: 15px; color: #334155; line-height: 1.4; }
+.timelineTime { font-size: 12px; color: #64748b; margin-top: 4px; }
 .empty { margin: 0; color: #64748b; }
 .loadingScreen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f4f7fb; }
 .loadingCard { display: inline-flex; gap: 8px; align-items: center; padding: 14px 18px; border: 1px solid #dce3ec; border-radius: 12px; background: #fff; color: #334155; }

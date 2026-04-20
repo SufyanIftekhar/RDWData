@@ -7,6 +7,7 @@ import { useVehicleLookup } from "@/hooks/useVehicleLookup";
 import { VehicleNavBar } from "./VehicleNavBar";
 import { PremiumLock } from "../ui/PremiumLock";
 import { useI18n } from "@/lib/i18n/context";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine, Cell } from "recharts";
 import styles from "./NegotiationCopilotScreen.module.css";
 
 type Props = { plate: string };
@@ -206,6 +207,32 @@ export function NegotiationCopilotScreen({ plate }: Props) {
               <div className={styles.note}>
                 {formatCurrency(marketMin)} - {formatCurrency(marketMax)} ({data.enriched.marketValueConfidence ?? "LOW"})
               </div>
+            </div>
+          </div>
+
+          <div className={styles.interactiveChartCard}>
+            <h3>{locale === "nl" ? "Visuele biedstrategie" : "Visual offer strategy"}</h3>
+            <div className={styles.chartWrapper}>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={[
+                  { name: locale === "nl" ? "Startbod" : "Start Offer", value: aiPricing?.offerMin ?? offerMin, fill: "#3b82f6" },
+                  { name: locale === "nl" ? "Doelprijs" : "Target Price", value: aiPricing?.offerMax ?? offerMax, fill: "#10b981" },
+                  { name: locale === "nl" ? "Marktwaarde" : "Market Value", value: marketNow, fill: "#64748b" },
+                  { name: locale === "nl" ? "Walk Away" : "Walk Away", value: aiPricing?.walkAway ?? walkAway, fill: "#ef4444" }
+                ]} layout="vertical" margin={{ left: 24, right: 24, top: 12, bottom: 12 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.4} />
+                  <XAxis type="number" domain={['dataMin - 1000', 'dataMax + 1000']} tickFormatter={(v) => `€${v}`} />
+                  <YAxis dataKey="name" type="category" width={90} axisLine={false} tickLine={false} />
+                  <Tooltip formatter={(v: any) => formatCurrency(Number(v))} cursor={{fill: 'transparent'}} />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={32}>
+                    {
+                      [0,1,2,3].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={["#3b82f6", "#10b981", "#64748b", "#ef4444"][index]} />
+                      ))
+                    }
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 

@@ -2,6 +2,7 @@
 
 
 import { AlertCircle, BarChart3, CheckCircle2, Wrench } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from "recharts";
 import { useVehicleLookup } from "@/hooks/useVehicleLookup";
 import { VehicleNavBar } from "./VehicleNavBar";
 import { PremiumLock } from "../ui/PremiumLock";
@@ -123,15 +124,32 @@ export function ApkFailureIntelligenceScreen({ plate }: Props) {
             {recurringCategories.length === 0 ? (
               <p className={styles.empty}>{locale === "nl" ? "Geen defectpatronen gevonden." : "No defect patterns found."}</p>
             ) : (
-              <div className={styles.list}>
-                {recurringCategories.map((item) => (
-                  <div key={item.category} className={styles.item}>
-                    <div className={styles.itemTitle}>{item.category}</div>
-                    <div className={styles.itemMeta}>{item.count} {locale === "nl" ? "keer gezien" : "occurrences"}</div>
-                    <div className={styles.itemSamples}>{item.samples.join(" | ")}</div>
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className={styles.chartWrapper}>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={recurringCategories} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.3} />
+                      <XAxis type="number" hide />
+                      <YAxis dataKey="category" type="category" width={140} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#475569' }} />
+                      <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '12px', border: '1px solid #dce3ec', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} />
+                      <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={32}>
+                        {recurringCategories.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={["#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e"][index % 5]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className={styles.list}>
+                  {recurringCategories.map((item) => (
+                    <div key={item.category} className={styles.item}>
+                      <div className={styles.itemTitle}>{item.category}</div>
+                      <div className={styles.itemMeta}>{item.count} {locale === "nl" ? "keer gezien" : "occurrences"}</div>
+                      <div className={styles.itemSamples}>{item.samples.join(" | ")}</div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 

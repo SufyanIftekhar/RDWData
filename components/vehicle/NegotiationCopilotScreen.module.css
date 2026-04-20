@@ -1,7 +1,7 @@
 .pageContainer {
   min-height: 100vh;
   background: #f4f7fb;
-  padding: 24px;
+  padding: 16px;
 }
 
 .contentContainer {
@@ -9,28 +9,30 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .hero {
   border: 1px solid #dce3ec;
   background: #ffffff;
   border-radius: 18px;
-  padding: 20px;
+  padding: 18px;
 }
 
 .hero h1 {
   margin: 0;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 800;
   color: #0f172a;
 }
 
 .hero p {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: #64748b;
+  font-size: 13px;
   line-height: 1.45;
 }
+
 
 .grid {
   display: grid;
@@ -150,3 +152,100 @@
     grid-template-columns: 1fr;
   }
 }
+
+.interactiveChartCard {
+  border: 1px solid #dce3ec;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 18px;
+}
+
+.interactiveChartCard h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.chartWrapper {
+  width: 100%;
+  margin-top: 10px;
+  overflow-x: auto;  /* allow horizontal scroll for chart on tiny screens */
+}
+
+@media (max-width: 640px) {
+  .pageContainer {
+    padding: 10px;
+  }
+
+  .contentContainer {
+    gap: 10px;
+  }
+
+  .hero {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .hero h1 {
+    font-size: 18px;
+  }
+
+  .hero p {
+    font-size: 12px;
+  }
+
+  .card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .cardTitle {
+    font-size: 12px;
+  }
+
+  .bigValue {
+    font-size: 20px;
+  }
+
+  .note {
+    font-size: 12px;
+  }
+
+  .talkTrack {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .talkTrack h3 {
+    font-size: 15px;
+  }
+
+  .interactiveChartCard {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .interactiveChartCard h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .aiScriptBox {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .aiScriptTitle {
+    font-size: 12px;
+  }
+
+  .aiScriptText {
+    font-size: 13px;
+  }
+
+  .aiHints {
+    font-size: 12px;
+  }
+}
+

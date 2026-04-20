@@ -1,67 +1,113 @@
 .topbar {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 16px;
+  align-items: center;
+  padding: 12px 16px;
   border: 1px solid var(--border);
   background: #ffffff;
   border-radius: var(--radius-xl);
   box-shadow: 0 25px 40px rgba(15, 23, 42, 0.06);
+  gap: 12px;
+  min-width: 0;
+  /* no overflow:hidden — scroll arrows need to be visible */
+}
+
+/* Wrapper that holds arrows + scrollable strip */
+.navArea {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Left / right scroll arrow buttons */
+.scrollBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: opacity 180ms ease, background-color 180ms ease;
+}
+
+.scrollBtn:hover {
+  background: var(--secondary, #f1f5f9);
 }
 
 .brandBlock {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   white-space: nowrap;
-  flex: 1;
+  flex-shrink: 0;
 }
 
 .brandMark {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--primary);
   color: var(--primary-foreground);
+  flex-shrink: 0;
 }
 
 .brandCopy {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .brandTitle {
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.1;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .brandSubtitle {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--muted-foreground);
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
+/* Scrollable pill strip — NO wrapping ever */
 .topbarRight {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  margin-left: 12px;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;      /* ← key: never wrap */
+  min-width: 0;
+  flex: 1;
+  /* subtle fade-out on the right to hint more content */
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  padding-bottom: 2px;   /* room for active shadow */
+  /* hide scrollbar on desktop but keep it functional */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.topbarRight::-webkit-scrollbar {
+  display: none;
 }
 
 .navPill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 14px;
-  min-width: 100px;
+  padding: 7px 13px;
+  /* min-width intentionally removed — natural content width */
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -70,82 +116,32 @@
   color: var(--foreground);
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, transform 200ms ease;
+  flex-shrink: 0;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.navPill:hover:not(.navPillActive) {
+  background: var(--secondary, #f1f5f9);
+  border-color: rgba(37, 99, 235, 0.25);
 }
 
 .navPillActive {
   background: var(--primary);
   color: var(--primary-foreground);
   border-color: transparent;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
 }
-
-@media (max-width: 720px) {
-  .topbar {
-    flex-direction: column;
-    padding: 16px;
-    overflow: hidden;
-  }
-
-  .brandCopy {
-    gap: 4px;
-  }
-
-  .topbarRight {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-    margin-left: 0;
-    margin-top: 20px;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 12px;
-    -ms-overflow-style: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary) transparent;
-    -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(to right, black 90%, transparent 100%);
-  }
-
-
-  .topbarRight::-webkit-scrollbar {
-    display: block;
-    height: 4px;
-  }
-
-  .topbarRight::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-  }
-
-  .topbarRight::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 10px;
-    opacity: 0.5;
-  }
-
-  .navPill {
-    width: auto;
-    min-width: max-content;
-    border-radius: 12px;
-    padding: 10px 20px;
-  }
-}
-
 
 .navPillPremium {
   display: flex;
   align-items: center;
-  gap: 6px;
-  position: relative;
-  border-color: rgba(37, 99, 235, 0.2);
+  gap: 5px;
+  border-color: rgba(37, 99, 235, 0.18);
 }
 
 .lockIcon {
-  color: #64748b;
-  opacity: 0.6;
+  color: #94a3b8;
+  opacity: 0.8;
 }
 
 .navPillActive .lockIcon {
@@ -153,4 +149,33 @@
   opacity: 1;
 }
 
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .brandBlock {
+    display: none;
+  }
 
+  .topbar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .brandMark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+
+  .brandTitle {
+    font-size: 13px;
+  }
+
+  .brandSubtitle {
+    font-size: 11px;
+  }
+
+  .navPill {
+    font-size: 11px;
+    padding: 6px 11px;
+  }
+}

@@ -232,78 +232,10 @@
   font-weight: 500;
 }
 
-.chartMock {
-  height: 220px;
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  padding-top: 24px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-}
-
-.chartMock::before,
-.chartMock::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  border-top: 1px dashed var(--border);
-  opacity: 0.5;
-}
-
-.chartMock::before {
-  top: 0;
-}
-
-.chartMock::after {
-  top: 50%;
-}
-
-.barGroup {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-  justify-content: flex-end;
-  position: relative;
-  z-index: 1;
-}
-
-.bar {
+.chartInteractive {
+  height: 250px;
+  margin-top: 10px;
   width: 100%;
-  max-width: 48px;
-  background: var(--secondary);
-  border-radius: 6px 6px 0 0;
-  position: relative;
-  transition: height 0.3s ease;
-}
-
-.barCurrent {
-  background: var(--primary);
-}
-
-.barLabel {
-  font-size: 13px;
-  color: var(--muted-foreground);
-  font-weight: 500;
-}
-
-.barLabelCurrent {
-  color: var(--foreground);
-  font-weight: 700;
-}
-
-.barValue {
-  position: absolute;
-  top: -24px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--foreground);
 }
 
 .calcPanel {

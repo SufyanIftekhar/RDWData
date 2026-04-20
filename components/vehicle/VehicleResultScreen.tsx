@@ -199,19 +199,24 @@ function SpecChip({ icon: Icon, label }: { icon: ElementType; label: string }) {
 function InsightCard({
   icon: Icon,
   title,
-  value
+  value,
+  isLoading
 }: {
   icon: ElementType;
   title: string;
-  value: string;
+  value: React.ReactNode;
+  isLoading?: boolean;
 }) {
   return (
     <div className={styles.insightCard}>
       <div className={styles.insightIcon}>
-        <Icon size={18} />
+        {isLoading ? <RefreshCw className={styles.spinningIcon} size={18} /> : <Icon size={18} />}
       </div>
       <div className={styles.insightCopy}>
-        <div className={styles.insightTitle}>{title}</div>
+        <div className={styles.insightTitle}>
+          {title}
+          {isLoading && <span className={styles.tooltipText}>Calculating...</span>}
+        </div>
         <div className={styles.insightValue}>{value}</div>
       </div>
     </div>
@@ -364,6 +369,31 @@ export function VehicleResultScreen({ plate }: Props) {
   const [isSaved, setIsSaved] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [claudeValue, setClaudeValue] = useState<number | null>(null);
+  const [isCalculatingClaude, setIsCalculatingClaude] = useState(false);
+
+  useEffect(() => {
+    if (!normalized || isError) return;
+    let active = true;
+    setIsCalculatingClaude(true);
+    void (async () => {
+      try {
+        const response = await fetch(`/api/vehicle/${encodeURIComponent(normalized)}?lang=${encodeURIComponent(locale)}&include_ai=1`, { cache: "no-store" });
+        if (!response.ok || !active) return;
+        const payload = await response.json();
+        if (active && payload.aiValuation?.estimatedValueNow) {
+          setClaudeValue(payload.aiValuation.estimatedValueNow);
+        }
+      } catch {
+        // silently fallback
+      } finally {
+        if (active) setIsCalculatingClaude(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [normalized, locale, isError]);
 
   const score = useMemo(() => {
     if (!data?.vehicle || !data.enriched) {
@@ -649,7 +679,8 @@ export function VehicleResultScreen({ plate }: Props) {
               <InsightCard
                 icon={Coins}
                 title={locale === "nl" ? "Geschatte waarde" : "Estimated value"}
-                value={formatCurrency(e.estimatedValueNow)}
+                value={formatCurrency(claudeValue ?? e.estimatedValueNow)}
+                isLoading={isCalculatingClaude && !claudeValue}
               />
               <InsightCard
                 icon={Clock3}

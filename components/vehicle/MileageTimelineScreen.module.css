@@ -24,11 +24,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 24px 56px;
+  padding: 20px 16px 48px;
   background: var(--background);
   font-family: "Inter", system-ui, -apple-system, sans-serif;
   color: var(--foreground);
 }
+
 
 .contentContainer {
   width: 100%;
@@ -145,11 +146,12 @@
 }
 
 .heroTitle {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
+
 
 .heroSubtitle {
   font-size: 15px;
@@ -198,6 +200,7 @@
   gap: 24px;
 }
 
+
 .chartPanel {
   padding: 28px;
   display: flex;
@@ -211,9 +214,10 @@
 
 .chartHeader {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
+  gap: 10px;
 }
+
 
 .chartTitleArea {
   display: flex;
@@ -222,20 +226,24 @@
 }
 
 .chartTitle {
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 700;
 }
 
+
 .chartSubtitle {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--muted-foreground);
 }
 
+
 .chartLegend {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
 }
+
 
 .legendItem {
   display: flex;
@@ -464,9 +472,125 @@
   }
 }
 
-@media (max-width: 720px) {
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
+@media (max-width: 768px) {
+  .dashboardGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .heroPanel {
+    padding: 18px 16px;
+  }
+
+  .heroTitle {
+    font-size: 22px;
+  }
+
+  .heroSubtitle {
+    font-size: 13px;
+  }
+
+  .heroMetrics {
+    gap: 8px;
+  }
+
+  .metricChip {
+    min-width: 100px;
+    padding: 10px 12px;
+  }
+
+  .metricValue {
+    font-size: 16px;
+  }
+
+  .chartPanel {
+    padding: 16px;
+  }
+
+  .chartContainer {
+    height: 220px;
+  }
+
+  .timelinePanel {
+    padding: 16px;
+  }
+
+  .timelineHeader {
+    font-size: 15px;
+  }
+
+  .contentContainer {
+    gap: 16px;
   }
 }
+
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 12px 10px 40px;
+  }
+
+  .heroPanel {
+    padding: 14px 12px;
+  }
+
+  .heroTitle {
+    font-size: 19px;
+  }
+
+  .heroSubtitle {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .metricChip {
+    min-width: 90px;
+    padding: 8px 10px;
+  }
+
+  .metricValue {
+    font-size: 14px;
+  }
+
+  .metricLabel {
+    font-size: 11px;
+  }
+
+  .chartPanel {
+    padding: 12px;
+  }
+
+  .chartContainer {
+    height: 180px;
+  }
+
+  .chartTitle {
+    font-size: 14px;
+  }
+
+  .legendItem {
+    font-size: 11px;
+  }
+
+  .timelinePanel {
+    padding: 12px;
+  }
+
+  .timelineTitle {
+    font-size: 13px;
+  }
+
+  .timelineMileage {
+    font-size: 13px;
+  }
+
+  .timelineDate,
+  .timelineDesc {
+    font-size: 11px;
+  }
+}
+
