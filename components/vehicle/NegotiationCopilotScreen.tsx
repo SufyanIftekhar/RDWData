@@ -7,7 +7,7 @@ import { useVehicleLookup } from "@/hooks/useVehicleLookup";
 import { VehicleNavBar } from "./VehicleNavBar";
 import { PremiumLock } from "../ui/PremiumLock";
 import { useI18n } from "@/lib/i18n/context";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine, Cell } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell } from "recharts";
 import styles from "./NegotiationCopilotScreen.module.css";
 
 type Props = { plate: string };
@@ -223,7 +223,7 @@ export function NegotiationCopilotScreen({ plate }: Props) {
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.4} />
                   <XAxis type="number" domain={['dataMin - 1000', 'dataMax + 1000']} tickFormatter={(v) => `€${v}`} />
                   <YAxis dataKey="name" type="category" width={90} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={(v: any) => formatCurrency(Number(v))} cursor={{fill: 'transparent'}} />
+                  <Tooltip formatter={(v: string | number) => formatCurrency(Number(v))} cursor={{fill: 'transparent'}} />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={32}>
                     {
                       [0,1,2,3].map((entry, index) => (

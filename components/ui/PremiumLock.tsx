@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import styles from "./PremiumLock.module.css";
 import { Button } from "./Button";
 import { CheckCircle2, Lock } from "lucide-react";
@@ -35,14 +35,7 @@ export function PremiumLock({ children, isLocked = true, featureName, plate, sec
 
   if (!shouldLock || isUnlockedForPlate) return <>{children}</>;
 
-  const premiumFeatures = [
-    { id: "mileage", label: locale === "nl" ? "Volledige kilometerhistorie (NAP)" : "Full Odometer History (NAP)" },
-    { id: "damage", label: locale === "nl" ? "Schade- en reparatieregistraties" : "Damage & Repair Records" },
-    { id: "valuation", label: locale === "nl" ? "Realtime marktwaardering" : "Real-time Market Valuation" },
-    { id: "ownership", label: locale === "nl" ? "Eigendomshistorie" : "Ownership Duration History" },
-    { id: "stolen", label: locale === "nl" ? "Diefstal- en politiemeldingen" : "Stolen & Police Signal Status" },
-    { id: "vin", label: locale === "nl" ? "Geverifieerde VIN- en buildspecificaties" : "Verified VIN & Build Specs" }
-  ];
+
 
   const openModal = () => setShowModal(true);
 
@@ -71,14 +64,7 @@ export function PremiumLock({ children, isLocked = true, featureName, plate, sec
             </p>
           </div>
 
-          <div className={styles.featureList}>
-            {premiumFeatures.map((f) => (
-              <div key={f.id} className={styles.featureItem}>
-                <CheckCircle2 size={14} className={styles.checkIcon} />
-                <span>{f.label}</span>
-              </div>
-            ))}
-          </div>
+
 
           <Button variant="primary" className={styles.unlockButton} onClick={openModal}>
             {locale === "nl" ? "Upgrade naar Premium" : "Upgrade to Premium Now"}

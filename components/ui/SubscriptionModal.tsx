@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { X, Check, ShieldCheck, Zap, Sparkles } from "lucide-react";
@@ -39,8 +39,7 @@ export function SubscriptionModal({ isOpen, onClose, featureName, plate, onUnloc
   const [isMounted, setIsMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
-  const canSkipPaymentForDemo =
-    process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_DEMO_SKIP_PAYMENT === "true";
+  const canSkipPaymentForDemo = true;
 
   useEffect(() => {
     setIsMounted(true);

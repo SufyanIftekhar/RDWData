@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   BarChart3,
-  Bell,
   BookOpen,
   ChevronDown,
   ChevronRight,
@@ -16,7 +15,6 @@ import {
   LayoutDashboard,
   Lock,
   LogOut,
-  Mail,
   Menu,
   Palette,
   RefreshCw,
