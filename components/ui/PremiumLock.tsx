@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import styles from "./PremiumLock.module.css";
 import { Button } from "./Button";
-import { CheckCircle2, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { SubscriptionModal } from "./SubscriptionModal";
 import { useI18n } from "@/lib/i18n/context";
 import { hasPaidAccessForPlate } from "@/lib/payments/access";

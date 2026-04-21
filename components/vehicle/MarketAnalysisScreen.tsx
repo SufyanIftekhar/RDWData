@@ -205,7 +205,7 @@ export function MarketAnalysisScreen({ plate }: Props) {
                       <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.4} />
                       <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} tickFormatter={(v) => `€${v}`} />
-                      <Tooltip formatter={(value: string | number) => formatCurrency(Number(value))} labelStyle={{ color: '#0f172a' }} itemStyle={{ color: '#2563eb', fontWeight: 'bold' }} />
+                      <Tooltip formatter={(value) => formatCurrency(Number(value))} labelStyle={{ color: '#0f172a' }} itemStyle={{ color: '#2563eb', fontWeight: 'bold' }} />
                       <Area type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
                     </AreaChart>
                   </ResponsiveContainer>

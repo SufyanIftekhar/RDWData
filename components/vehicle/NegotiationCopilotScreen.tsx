@@ -223,7 +223,7 @@ export function NegotiationCopilotScreen({ plate }: Props) {
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.4} />
                   <XAxis type="number" domain={['dataMin - 1000', 'dataMax + 1000']} tickFormatter={(v) => `€${v}`} />
                   <YAxis dataKey="name" type="category" width={90} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={(v: string | number) => formatCurrency(Number(v))} cursor={{fill: 'transparent'}} />
+                  <Tooltip formatter={(v) => formatCurrency(Number(v))} cursor={{fill: 'transparent'}} />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={32}>
                     {
                       [0,1,2,3].map((entry, index) => (
