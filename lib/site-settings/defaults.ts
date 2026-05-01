@@ -8,6 +8,7 @@ export type PublicSiteSettings = {
     riskOverview: boolean;
     mileageHistory: boolean;
     marketAnalysis: boolean;
+    vehicleComparison: boolean;
     damageHistory: boolean;
     technicalSpecs: boolean;
     inspectionTimeline: boolean;
@@ -88,6 +89,7 @@ export const defaultSiteSettings: PublicSiteSettings = {
     riskOverview: true,
     mileageHistory: true,
     marketAnalysis: true,
+    vehicleComparison: true,
     damageHistory: true,
     technicalSpecs: false,
     inspectionTimeline: false,

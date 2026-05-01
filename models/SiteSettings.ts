@@ -11,6 +11,7 @@ export type SiteSettingsDoc = {
     riskOverview: boolean;
     mileageHistory: boolean;
     marketAnalysis: boolean;
+    vehicleComparison: boolean;
     damageHistory: boolean;
     technicalSpecs: boolean;
     inspectionTimeline: boolean;
@@ -51,6 +52,7 @@ const siteSettingsSchema = new Schema<SiteSettingsDoc>(
       riskOverview: { type: Boolean, required: true, default: true },
       mileageHistory: { type: Boolean, required: true, default: true },
       marketAnalysis: { type: Boolean, required: true, default: true },
+      vehicleComparison: { type: Boolean, required: true, default: true },
       damageHistory: { type: Boolean, required: true, default: true },
       technicalSpecs: { type: Boolean, required: true, default: false },
       inspectionTimeline: { type: Boolean, required: true, default: false },

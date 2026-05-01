@@ -87,7 +87,7 @@ const NAV: NavItem[] = [
 const emptySettings: PublicSiteSettings = {
   paymentEnabled: true,
   payment: { amount: "9.95", currency: "EUR" },
-  lockSections: { riskOverview: true, mileageHistory: true, marketAnalysis: true, damageHistory: true, technicalSpecs: false, inspectionTimeline: false, ownershipHistory: false, reportDownload: true },
+  lockSections: { riskOverview: true, mileageHistory: true, marketAnalysis: true, vehicleComparison: true, damageHistory: true, technicalSpecs: false, inspectionTimeline: false, ownershipHistory: false, reportDownload: true },
   ui: { showFeaturesLink: true, showSampleLink: true, showPricingLink: true, showLoginButton: true },
   content: { platformName: "Kentekenrapport", landingHeroTitleA: "", landingHeroTitleB: "", landingHeroSubtitle: "", landingCtaTitle: "", landingCtaSubtitle: "", landingCtaButton: "", landingHeroImageUrl: "", footerDescription: "" },
   landing: { badgeTop: "", trustedSourcesLabel: "", featureSectionLabel: "", featureSectionTitle: "", howSectionLabel: "", howSectionTitle: "", sectionVisibility: { features: true, workflow: true, cta: true }, features: [], workflow: [], footer: { productTitle: "Product", companyTitle: "Company", legalTitle: "Legal", productLinks: [], companyLinks: [], legalLinks: [] } },

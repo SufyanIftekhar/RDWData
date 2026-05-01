@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { CarFront, Lock, ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 import styles from "./VehicleNavBar.module.css";
@@ -21,6 +21,15 @@ export function VehicleNavBar({ plate, subtitle = "Open detailed reports" }: Pro
         : subtitle
       : subtitle;
   const pathname = usePathname() ?? "";
+  const searchParams = useSearchParams();
+  const carryParams = new URLSearchParams();
+  const mileageRaw = searchParams.get("mileage");
+  const compareRaw = searchParams.get("compare");
+  const compareMileageRaw = searchParams.get("compareMileage");
+  if (mileageRaw && /^\d{1,7}$/.test(mileageRaw)) carryParams.set("mileage", mileageRaw);
+  if (compareRaw && /^[A-Z0-9-]{1,16}$/i.test(compareRaw)) carryParams.set("compare", compareRaw.toUpperCase());
+  if (compareMileageRaw && /^\d{1,7}$/.test(compareMileageRaw)) carryParams.set("compareMileage", compareMileageRaw);
+  const sharedQuery = carryParams.toString();
   const base = `/search/${plate}`;
 
   const navItems =
@@ -34,6 +43,7 @@ export function VehicleNavBar({ plate, subtitle = "Open detailed reports" }: Pro
           { href: "damage-history", label: "Schade", isPremium: true },
           { href: "ownership-history", label: "Eigendom", isPremium: false },
           { href: "market-analysis", label: "Markt", isPremium: true },
+          { href: "vehicle-comparison", label: "Vergelijking", isPremium: true },
           { href: "negotiation-copilot", label: "Onderhandelcoach", isPremium: true },
           { href: "apk-failure-intelligence", label: "APK Intelligence", isPremium: true },
           { href: "post-purchase-watch", label: "Watch mode", isPremium: true },
@@ -47,6 +57,7 @@ export function VehicleNavBar({ plate, subtitle = "Open detailed reports" }: Pro
           { href: "damage-history", label: "Damage", isPremium: true },
           { href: "ownership-history", label: "Ownership", isPremium: false },
           { href: "market-analysis", label: "Market", isPremium: true },
+          { href: "vehicle-comparison", label: "Comparison", isPremium: true },
           { href: "negotiation-copilot", label: "Negotiation Copilot", isPremium: true },
           { href: "apk-failure-intelligence", label: "APK Intelligence", isPremium: true },
           { href: "post-purchase-watch", label: "Watch mode", isPremium: true },
@@ -117,8 +128,9 @@ export function VehicleNavBar({ plate, subtitle = "Open detailed reports" }: Pro
         {/* Scrollable pill strip */}
         <div className={styles.topbarRight} ref={stripRef}>
           {navItems.map((item) => {
-            const href = item.href ? `${base}/${item.href}` : base;
-            const isActive = pathname === href || pathname === `${href}/`;
+            const hrefBase = item.href ? `${base}/${item.href}` : base;
+            const href = sharedQuery ? `${hrefBase}?${sharedQuery}` : hrefBase;
+            const isActive = pathname === hrefBase || pathname === `${hrefBase}/`;
             return (
               <Link
                 key={item.href}

@@ -9,7 +9,6 @@ export function usePlateSearch() {
   const router = useRouter();
   const { locale } = useI18n();
   const [plateInput, setPlateInput] = useState("");
-  const [mileageInput, setMileageInput] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const normalized = useMemo(() => normalizePlate(plateInput).slice(0, 7), [plateInput]);
@@ -35,20 +34,12 @@ export function usePlateSearch() {
     }
 
     setError(null);
-    const mileage = Number(mileageInput);
-    if (mileageInput.trim().length > 0 && (!Number.isFinite(mileage) || mileage < 0 || mileage > 1_500_000)) {
-      setError(locale === "nl" ? "Kilometerstand is ongeldig." : "Mileage is invalid.");
-      return;
-    }
-    const query = mileageInput.trim().length > 0 ? `?mileage=${encodeURIComponent(String(Math.round(mileage)))}` : "";
-    router.push(`/search/${encodeURIComponent(plate)}${query}`);
+    router.push(`/search/${encodeURIComponent(plate)}`);
   };
 
   return {
     plateInput,
     setPlateInput,
-    mileageInput,
-    setMileageInput,
     error,
     setError,
     normalized,

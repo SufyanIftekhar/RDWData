@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   Pencil,
@@ -39,8 +40,45 @@ function clamp(value: number, min: number, max: number) {
 
 export function MarketAnalysisScreen({ plate }: Props) {
   const { locale } = useI18n();
-  const { normalized, isValid, data, isLoading, isError } = useVehicleLookup(plate);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const mileageFromQuery = useMemo(() => {
+    const raw = searchParams.get("mileage");
+    if (!raw || raw.trim().length === 0) return null;
+    const value = Number(raw);
+    if (!Number.isFinite(value) || value < 0 || value > 1_500_000) return null;
+    return Math.round(value);
+  }, [searchParams]);
+  const [mileageInput, setMileageInput] = useState(() => (mileageFromQuery != null ? String(mileageFromQuery) : ""));
+  const mileageValue = useMemo(() => {
+    if (mileageInput.trim().length === 0) return null;
+    const value = Number(mileageInput);
+    if (!Number.isFinite(value) || value < 0 || value > 1_500_000) return null;
+    return Math.round(value);
+  }, [mileageInput]);
+  const { normalized, isValid, data, isLoading, isError } = useVehicleLookup(plate, mileageValue);
   const [sellerPrice, setSellerPrice] = useState<string>("");
+
+  useEffect(() => {
+    setMileageInput(mileageFromQuery != null ? String(mileageFromQuery) : "");
+  }, [mileageFromQuery]);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const params = new URLSearchParams(searchParams.toString());
+    if (mileageValue == null) {
+      params.delete("mileage");
+    } else {
+      params.set("mileage", String(mileageValue));
+    }
+    const query = params.toString();
+    const nextUrl = query ? `${pathname}?${query}` : pathname;
+    const currentUrl = searchParams.toString() ? `${pathname}?${searchParams.toString()}` : pathname;
+    if (nextUrl !== currentUrl) {
+      router.replace(nextUrl, { scroll: false });
+    }
+  }, [mileageValue, pathname, router, searchParams]);
 
   const marketValue = data?.enriched?.estimatedValueNow ?? data?.vehicle.cataloguePrice ?? null;
   const marketValueMin = data?.enriched?.estimatedValueMin ?? null;
@@ -217,6 +255,22 @@ export function MarketAnalysisScreen({ plate }: Props) {
               <div className={styles.calcHeader}>
                 <div className={styles.calcTitle}>{locale === "nl" ? "Controleer vraagprijs" : "Check a listing price"}</div>
                 <div className={styles.calcSubtitle}>{locale === "nl" ? "Vergelijk de prijs van de verkoper met onze marktdata" : "Compare seller's price against our market data"}</div>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <div className={styles.inputLabel}>{locale === "nl" ? "Kilometerstand voor nauwkeurige waardering (optioneel)" : "Mileage for more accurate valuation (optional)"}</div>
+                <input
+                  className={styles.textInput}
+                  inputMode="numeric"
+                  value={mileageInput}
+                  onChange={(event) => setMileageInput(event.target.value.replace(/[^\d]/g, "").slice(0, 7))}
+                  placeholder={locale === "nl" ? "Bijv. 142000" : "E.g. 142000"}
+                />
+                <div className={styles.inputHint}>
+                  {locale === "nl"
+                    ? "Voer kilometerstand in voor een preciezere marktwaarde. Deze waarde wordt ook meegenomen in AI-analyse en PDF-rapport."
+                    : "Enter mileage for a more precise market value. This will also be used in AI analysis and the PDF report."}
+                </div>
               </div>
 
               <div className={styles.inputGroup}>

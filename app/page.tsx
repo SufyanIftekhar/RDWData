@@ -52,10 +52,9 @@ function resolveLegalHref(label: string): string | null {
 
 function PlateSearch() {
   const [value, setValue] = useState("");
-  const [mileage, setMileage] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
 
   const submit = () => {
     const plate = normalizePlate(value);
@@ -63,13 +62,7 @@ function PlateSearch() {
       setError(t("landing.invalidPlate"));
       return;
     }
-    const parsedMileage = Number(mileage);
-    if (mileage.trim().length > 0 && (!Number.isFinite(parsedMileage) || parsedMileage < 0 || parsedMileage > 1_500_000)) {
-      setError(locale === "nl" ? "Kilometerstand is ongeldig." : "Mileage is invalid.");
-      return;
-    }
-    const query = mileage.trim().length > 0 ? `?mileage=${encodeURIComponent(String(Math.round(parsedMileage)))}` : "";
-    router.push(`/search/${plate}${query}`);
+    router.push(`/search/${plate}`);
   };
 
   return (
@@ -85,16 +78,6 @@ function PlateSearch() {
           onKeyDown={(event) => event.key === "Enter" && submit()}
           placeholder={t("landing.example")}
           className={`${styles["input-mock"]} ${styles["plate-input"]}`}
-        />
-        <input
-          value={mileage}
-          onChange={(event) => {
-            setMileage(event.target.value.replace(/[^\d]/g, "").slice(0, 7));
-            setError(null);
-          }}
-          placeholder={locale === "nl" ? "Kilometerstand" : "Mileage"}
-          className={`${styles["input-mock"]} ${styles["mileage-input"]}`}
-          inputMode="numeric"
         />
         <button onClick={submit} className={styles["search-btn"]}>
           {t("landing.getReport")}

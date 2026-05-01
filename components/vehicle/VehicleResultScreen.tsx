@@ -378,7 +378,9 @@ export function VehicleResultScreen({ plate }: Props) {
     setIsCalculatingClaude(true);
     void (async () => {
       try {
-        const response = await fetch(`/api/vehicle/${encodeURIComponent(normalized)}?lang=${encodeURIComponent(locale)}&include_ai=1`, { cache: "no-store" });
+        const response = await fetch(`/api/vehicle/${encodeURIComponent(normalized)}?lang=${encodeURIComponent(locale)}&include_ai=1${
+          typeof mileageInput === "number" && Number.isFinite(mileageInput) ? `&mileage=${encodeURIComponent(String(mileageInput))}` : ""
+        }`, { cache: "no-store" });
         if (!response.ok || !active) return;
         const payload = await response.json();
         if (active && payload.aiValuation?.estimatedValueNow) {
@@ -393,7 +395,7 @@ export function VehicleResultScreen({ plate }: Props) {
     return () => {
       active = false;
     };
-  }, [normalized, locale, isError]);
+  }, [normalized, locale, isError, mileageInput]);
 
   const score = useMemo(() => {
     if (!data?.vehicle || !data.enriched) {

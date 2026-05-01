@@ -9,7 +9,7 @@ import { useI18n } from "@/lib/i18n/context";
 export function SearchBar() {
   const { locale } = useI18n();
   const {
-    plateInput, setPlateInput, mileageInput, setMileageInput, error, setError,
+    plateInput, setPlateInput, error, setError,
     normalized, preview, isValid, onSubmit
   } = usePlateSearch();
 
@@ -31,16 +31,6 @@ export function SearchBar() {
           />
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-          <input
-            value={mileageInput}
-            onChange={(e) => {
-              setMileageInput(e.target.value.replace(/[^\d]/g, "").slice(0, 7));
-              if (error) setError(null);
-            }}
-            placeholder={locale === "nl" ? "Kilometerstand (optioneel)" : "Mileage (optional)"}
-            className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm font-semibold text-slate-900 shadow-sm outline-none placeholder:text-slate-400 placeholder:font-normal transition-all focus:border-brand-400 focus:ring-2 focus:ring-brand-100 sm:max-w-[260px]"
-            inputMode="numeric"
-          />
           <button
             type="submit"
             className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-600 px-6 py-3.5 text-sm font-bold text-white shadow-brand-sm transition-all hover:bg-brand-700 hover:shadow-brand focus:outline-none focus:ring-2 focus:ring-brand-200 focus:ring-offset-1"

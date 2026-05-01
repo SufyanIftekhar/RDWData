@@ -22,7 +22,8 @@ const mapper_1 = require("../lib/rdw/mapper");
         apk: [{ keuringsresultaat: "goedgekeurd" }],
         defects: [{ gebrek_identificatienummer: "ABC123" }],
         recalls: [{ referentiecode_rdweu: "R1" }],
-        body: [{ carrosserietype: "hatchback" }]
+        body: [{ carrosserietype: "hatchback" }],
+        typeApprovals: []
     });
     strict_1.default.equal(profile.plate, "16RSL9");
     strict_1.default.equal(profile.displayPlate, "16-RSL-9");
@@ -30,7 +31,7 @@ const mapper_1 = require("../lib/rdw/mapper");
     strict_1.default.equal(profile.vehicle.tradeName, "YARIS");
     strict_1.default.equal(profile.vehicle.year, 2013);
     strict_1.default.equal(profile.vehicle.fuelType, "Benzine");
-    strict_1.default.equal(profile.vehicle.apkExpiryDate, "20270426");
+    strict_1.default.equal(profile.vehicle.apkExpiryDate, "2027-04-26");
     strict_1.default.equal(profile.vehicle.recallsCount, 1);
     strict_1.default.equal(profile.inspections.length, 1);
     strict_1.default.equal(profile.defects.length, 1);
@@ -41,4 +42,5 @@ const mapper_1 = require("../lib/rdw/mapper");
     strict_1.default.equal(profile.raw.defects.length, 1);
     strict_1.default.equal(profile.raw.recalls.length, 1);
     strict_1.default.equal(profile.raw.body.length, 1);
+    strict_1.default.equal(profile.raw.typeApprovals.length, 0);
 });

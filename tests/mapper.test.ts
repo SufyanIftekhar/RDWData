@@ -28,7 +28,7 @@ test("toVehicleProfile maps key fields and raw payloads", () => {
   assert.equal(profile.vehicle.tradeName, "YARIS");
   assert.equal(profile.vehicle.year, 2013);
   assert.equal(profile.vehicle.fuelType, "Benzine");
-  assert.equal(profile.vehicle.apkExpiryDate, "20270426");
+  assert.equal(profile.vehicle.apkExpiryDate, "2027-04-26");
   assert.equal(profile.vehicle.recallsCount, 1);
   assert.equal(profile.inspections.length, 1);
   assert.equal(profile.defects.length, 1);
